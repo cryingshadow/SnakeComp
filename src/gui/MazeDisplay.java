@@ -8,23 +8,31 @@ import javax.swing.*;
 import model.*;
 
 /**
- * Display of a single field in a snake game.
+ * Display for a maze.
  * @author cryingshadow
  */
-public class FieldDisplay extends JPanel {
+public class MazeDisplay extends JPanel {
 
     /**
      * For serialization.
      */
-    private static final long serialVersionUID = -6276472917021577539L;
+    private static final long serialVersionUID = 3055355083944967024L;
 
     /**
      * Paints the background of the field.
      * @param g The graphics.
+     * @param x The offset on the x-axis.
+     * @param y The offset on the y-axis.
      * @param type The field type.
      * @param size The field size.
      */
-    private static void paintBackground(final Graphics g, final FieldType type, final int size) {
+    private static void paintFieldBackground(
+        final Graphics g,
+        final int x,
+        final int y,
+        final FieldType type,
+        final int size
+    ) {
         switch (type) {
             case WALL:
                 g.setColor(Color.GRAY);
@@ -32,18 +40,22 @@ public class FieldDisplay extends JPanel {
             default:
                 g.setColor(Color.BLACK);
         }
-        g.fillRect(0, 0, size, size);
+        g.fillRect(x, y, size, size);
     }
 
     /**
      * Paints the content of the field on top of its background (i.e., paintBackground must have been called before).
      * @param g The graphics.
+     * @param x The offset on the x-axis.
+     * @param y The offset on the y-axis.
      * @param type The field type.
      * @param snakePart The snake part.
      * @param size The field size.
      */
-    private static void paintContent(
+    private static void paintFieldContent(
         final Graphics g,
+        final int x,
+        final int y,
         final FieldType type,
         final Optional<SnakePart> snakePart,
         final int size
@@ -52,7 +64,7 @@ public class FieldDisplay extends JPanel {
         switch (type) {
             case FOOD:
                 g.setColor(Color.WHITE);
-                g.fillOval(0, 0, size, size);
+                g.fillOval(x, y, size, size);
                 break;
             case SNAKE:
                 if (!snakePart.isPresent()) {
@@ -60,12 +72,12 @@ public class FieldDisplay extends JPanel {
                 }
                 final SnakePart actualSnakePart = snakePart.get();
                 g.setColor(actualSnakePart.getColor());
-                g.fillOval(0, 0, size, size);
+                g.fillOval(x, y, size, size);
                 if (actualSnakePart.isHead()) {
                     final int lineWidth = 5;
                     final int reducedSize = size - 2 * lineWidth;
                     g.setColor(currentColor);
-                    g.fillOval(lineWidth, lineWidth, reducedSize, reducedSize);
+                    g.fillOval(x + lineWidth, y + lineWidth, reducedSize, reducedSize);
                 }
                 break;
             default:
@@ -74,29 +86,26 @@ public class FieldDisplay extends JPanel {
     }
 
     /**
-     * The field to display.
-     */
-    private Field field;
-
-    /**
-     * The size of this square field in pixels.
+     * The field size.
      */
     private int fieldSize;
 
     /**
-     * @param field The field to display.
-     * @param fieldSize The size of this square field in pixels.
+     * The maze.
      */
-    public FieldDisplay(final Field field, final int fieldSize) {
-        this.field = field;
-        this.setFieldSize(fieldSize);
-    }
+    private final Maze maze;
 
     /**
-     * @return The field to display.
+     * @param maze The maze.
+     * @param fieldSize The field size.
      */
-    public Field getField() {
-        return this.field;
+    public MazeDisplay(final Maze maze, final int fieldSize) {
+        final Field[][] array = maze.getMaze();
+        if (array.length < 1 || array[0].length < 1) {
+            throw new IllegalArgumentException("Maze must have at least one row and column!");
+        }
+        this.maze = maze;
+        this.fieldSize = fieldSize;
     }
 
     /**
@@ -108,14 +117,9 @@ public class FieldDisplay extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(this.getFieldSize(), this.getFieldSize());
-    }
-
-    /**
-     * @param field The field to display.
-     */
-    public void setField(final Field field) {
-        this.field = field;
+        final int size = this.getFieldSize();
+        final Field[][] array = this.maze.getMaze();
+        return new Dimension(size * array[0].length, size * array.length);
     }
 
     /**
@@ -128,9 +132,18 @@ public class FieldDisplay extends JPanel {
     @Override
     protected void paintComponent(final Graphics g) {
         final int size = this.getFieldSize();
-        final FieldType type = this.field.getType();
-        FieldDisplay.paintBackground(g, type, size);
-        FieldDisplay.paintContent(g, type, this.field.getSnakePart(), size);
+        final Field[][] fieldArray = this.maze.getMaze();
+        for (int i = 0; i < fieldArray.length; i++) {
+            final Field[] fieldRow = fieldArray[i];
+            final int yOffset = i * size;
+            for (int j = 0; j < fieldRow.length; j++) {
+                final Field field = fieldRow[j];
+                final FieldType type = field.getType();
+                final int xOffset = j * size;
+                MazeDisplay.paintFieldBackground(g, xOffset, yOffset, type, size);
+                MazeDisplay.paintFieldContent(g, xOffset, yOffset, type, field.getSnakePart(), size);
+            }
+        }
     }
 
 }
