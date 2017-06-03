@@ -34,6 +34,9 @@ public class MazeDisplay extends JPanel {
         final int size
     ) {
         switch (type) {
+            case COLLISION:
+                g.setColor(Color.YELLOW);
+                break;
             case WALL:
                 g.setColor(Color.GRAY);
                 break;

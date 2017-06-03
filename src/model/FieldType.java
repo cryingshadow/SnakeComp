@@ -1,10 +1,15 @@
 package model;
 
 /**
- * A field in a snake game.
+ * A field type.
  * @author cryingshadow
  */
 public enum FieldType {
+
+    /**
+     * A collision between a snake and a wall or another snake.
+     */
+    COLLISION,
 
     /**
      * A free field with food on it.
