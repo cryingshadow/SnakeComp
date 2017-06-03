@@ -113,7 +113,8 @@ public class Snake {
 
     /**
      * @param direction The direction in which the snake moves.
-     * @return The next position the snake would reach.
+     * @return The next position the snake would reach. This position might have a coordinate that is out of bounds and
+     *         has to be post-processed by an over- or underflow.
      */
     public Position getNextPosition(final Direction direction) {
         final Position currentHead = this.getHead();
