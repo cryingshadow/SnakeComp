@@ -24,6 +24,11 @@ public class GlobalSettings {
     private int foodPerSnake;
 
     /**
+     * The height of the maze.
+     */
+    private int height;
+
+    /**
      * The initial length of a snake.
      */
     private int initialSnakeLength;
@@ -34,6 +39,17 @@ public class GlobalSettings {
     private Optional<Integer> maxHunger;
 
     /**
+     * The number of walls in the maze (without the arena walls if set).
+     */
+    private int walls;
+
+
+    /**
+     * The width of the maze.
+     */
+    private int width;
+
+    /**
      * Default settings.
      */
     public GlobalSettings() {
@@ -42,6 +58,9 @@ public class GlobalSettings {
         this.arena = false;
         this.initialSnakeLength = 3;
         this.maxHunger = Optional.of(1000);
+        this.height = 20;
+        this.width = 20;
+        this.walls = 50;
     }
 
     /**
@@ -59,6 +78,13 @@ public class GlobalSettings {
     }
 
     /**
+     * @return The height of the maze.
+     */
+    public int getHeight() {
+        return this.height;
+    }
+
+    /**
      * @return The initial length of a snake.
      */
     public int getInitialSnakeLength() {
@@ -70,6 +96,20 @@ public class GlobalSettings {
      */
     public Optional<Integer> getMaxHunger() {
         return this.maxHunger;
+    }
+
+    /**
+     * @return The number of walls in the maze (without the arena walls if set).
+     */
+    public int getWalls() {
+        return this.walls;
+    }
+
+    /**
+     * @return The width of the maze.
+     */
+    public int getWidth() {
+        return this.width;
     }
 
     /**
@@ -101,6 +141,13 @@ public class GlobalSettings {
     }
 
     /**
+     * @param height The height of the maze.
+     */
+    public void setHeight(final int height) {
+        this.height = height;
+    }
+
+    /**
      * @param initialSnakeLength The initial length of a snake.
      */
     public void setInitialSnakeLength(final int initialSnakeLength) {
@@ -112,6 +159,20 @@ public class GlobalSettings {
      */
     public void setMaxHunger(final Optional<Integer> maxHunger) {
         this.maxHunger = maxHunger;
+    }
+
+    /**
+     * @param walls The number of walls in the maze (without the arena walls if set).
+     */
+    public void setWalls(final int walls) {
+        this.walls = walls;
+    }
+
+    /**
+     * @param width The width of the maze.
+     */
+    public void setWidth(final int width) {
+        this.width = width;
     }
 
 }
