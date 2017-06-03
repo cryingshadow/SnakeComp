@@ -106,6 +106,11 @@ public class FieldDisplay extends JPanel {
         return this.fieldSize;
     }
 
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(this.getFieldSize(), this.getFieldSize());
+    }
+
     /**
      * @param field The field to display.
      */
