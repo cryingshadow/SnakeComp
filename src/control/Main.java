@@ -20,22 +20,26 @@ public class Main {
     public static void main(final String[] args) {
         final JFrame frame = new JFrame("SnakeTest");
         final Container content = frame.getContentPane();
+        final CompetitionControl control = new CompetitionControl();
+        final Maze maze =
+            new Maze(
+                new Field[][]{
+                    {
+                        new Field(FieldType.FREE, Optional.empty()),
+                        new Field(FieldType.WALL, Optional.empty()),
+                        new Field(FieldType.FOOD, Optional.empty())
+                    },
+                    {
+                        new Field(FieldType.SNAKE, Optional.of(new SnakePart(Color.RED, false))),
+                        new Field(FieldType.SNAKE, Optional.of(new SnakePart(Color.GREEN, true))),
+                        new Field(FieldType.COLLISION, Optional.empty())
+                    }
+                }
+            );
         content.add(
             new MazeDisplay(
-                new Maze(
-                    new Field[][]{
-                        {
-                            new Field(FieldType.FREE, Optional.empty()),
-                            new Field(FieldType.WALL, Optional.empty()),
-                            new Field(FieldType.FOOD, Optional.empty())
-                        },
-                        {
-                            new Field(FieldType.SNAKE, Optional.of(new SnakePart(Color.RED, false))),
-                            new Field(FieldType.SNAKE, Optional.of(new SnakePart(Color.GREEN, true))),
-                            new Field(FieldType.COLLISION, Optional.empty())
-                        }
-                    }
-                ),
+//                maze,
+                control.getCurrentMaze(),
                 50
             )
         );
