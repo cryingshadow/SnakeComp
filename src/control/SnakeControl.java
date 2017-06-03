@@ -10,6 +10,11 @@ import model.*;
 public interface SnakeControl {
 
     /**
+     * @return The name of the snake being controlled.
+     */
+    String getName();
+
+    /**
      * @param maze The maze.
      * @param xPos The position of the snake's head in the maze on the x-axis.
      * @param yPos The position of the snake's head in the maze on the y-axis.
