@@ -1,5 +1,7 @@
 package model;
 
+import java.util.*;
+
 /**
  * Global settings for a snake competition.
  * @author cryingshadow
@@ -22,12 +24,24 @@ public class GlobalSettings {
     private int foodPerSnake;
 
     /**
+     * The initial length of a snake.
+     */
+    private int initialSnakeLength;
+
+    /**
+     * The maximum hunger a snake can survive.
+     */
+    private Optional<Integer> maxHunger;
+
+    /**
      * Default settings.
      */
     public GlobalSettings() {
         this.fieldSize = 50;
         this.foodPerSnake = 1;
         this.arena = false;
+        this.initialSnakeLength = 3;
+        this.maxHunger = Optional.of(1000);
     }
 
     /**
@@ -42,6 +56,20 @@ public class GlobalSettings {
      */
     public int getFoodPerSnake() {
         return this.foodPerSnake;
+    }
+
+    /**
+     * @return The initial length of a snake.
+     */
+    public int getInitialSnakeLength() {
+        return this.initialSnakeLength;
+    }
+
+    /**
+     * @return The maximum hunger a snake can survive.
+     */
+    public Optional<Integer> getMaxHunger() {
+        return this.maxHunger;
     }
 
     /**
@@ -70,6 +98,20 @@ public class GlobalSettings {
      */
     public void setFoodPerSnake(final int foodPerSnake) {
         this.foodPerSnake = foodPerSnake;
+    }
+
+    /**
+     * @param initialSnakeLength The initial length of a snake.
+     */
+    public void setInitialSnakeLength(final int initialSnakeLength) {
+        this.initialSnakeLength = initialSnakeLength;
+    }
+
+    /**
+     * @param maxHunger The maximum hunger a snake can survive.
+     */
+    public void setMaxHunger(final Optional<Integer> maxHunger) {
+        this.maxHunger = maxHunger;
     }
 
 }
