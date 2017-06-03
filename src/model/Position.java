@@ -25,6 +25,15 @@ public class Position {
         this.y = y;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (o instanceof Position) {
+            final Position p = (Position)o;
+            return this.x == p.x && this.y == p.y;
+        }
+        return false;
+    }
+
     /**
      * @return The position on the x-axis.
      */
@@ -37,6 +46,16 @@ public class Position {
      */
     public int getY() {
         return this.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return 3 * this.x + 5 * this.y;
+    }
+
+    @Override
+    public String toString() {
+        return "(" + this.x + ", " + this.y + ")";
     }
 
 }
