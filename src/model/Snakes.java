@@ -53,7 +53,7 @@ public class Snakes {
      * @return A stream of snakes at the specified position.
      */
     private Stream<Snake> snakesAt(final Position pos) {
-        return this.snakes.stream().filter(snake -> {return snake.getHead().equals(pos);});
+        return this.snakes.stream().filter(snake -> snake.getHead().equals(pos));
     }
 
 }
