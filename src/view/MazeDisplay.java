@@ -154,7 +154,7 @@ public class MazeDisplay extends JPanel {
     /**
      * The maze.
      */
-    private final Maze maze;
+    private Maze maze;
 
     /**
      * @param maze The maze.
@@ -188,6 +188,15 @@ public class MazeDisplay extends JPanel {
      */
     public void setFieldSize(final int fieldSize) {
         this.fieldSize = fieldSize;
+        this.repaint();
+    }
+
+    /**
+     * @param maze The maze.
+     */
+    public void setMaze(final Maze maze) {
+        this.maze = maze;
+        this.repaint();
     }
 
     @Override

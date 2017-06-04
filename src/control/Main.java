@@ -41,16 +41,31 @@ public class Main {
 //                    }
 //                }
 //            );
-        content.add(
-            new MazeDisplay(
-//                maze,
-                control.getCurrentMaze(),
-                50
-            )
-        );
+        final MazeDisplay display = new MazeDisplay(control.getCurrentMaze(), 50);
+        content.add(display);
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.pack();
-        frame.setVisible(true);
+        final Thread frameThread =
+            new Thread(
+                new Runnable(){
+
+                    @Override
+                    public void run() {
+                        frame.setVisible(true);
+                    }
+
+                }
+            );
+        frameThread.start();
+        try {
+            for (int i = 0; i < 50; i++) {
+                Thread.sleep(500);
+                control.turn();
+                display.setMaze(control.getCurrentMaze());
+            }
+        } catch (final InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 }

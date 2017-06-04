@@ -45,11 +45,11 @@ public class Food {
 
     /**
      * Removes food from the specified position.
-     * @param pos The position where to remove food.
-     * @return True if food has actually been removed.
+     * @param poss The positions where to remove food.
+     * @return True if some food has actually been removed.
      */
-    public boolean removeFood(final Position pos) {
-        return this.food.remove(pos);
+    public boolean removeFood(final Collection<Position> poss) {
+        return this.food.removeAll(poss);
     }
 
     /**

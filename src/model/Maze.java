@@ -22,6 +22,13 @@ public class Maze {
     }
 
     /**
+     * @return The positions of food that is being eaten.
+     */
+    public Collection<Position> getEatenFood() {
+        return this.getPositions(field -> field.getType().equals(FieldType.SNAKE_HEAD_EATING));
+    }
+
+    /**
      * @return The free positions in this maze.
      */
     public List<Position> getFreePositions() {
@@ -39,7 +46,10 @@ public class Maze {
      * @return The number of fields with food in this maze.
      */
     public int numOfFood() {
-        return this.getPositions(field -> field.getType().equals(FieldType.FOOD)).size();
+        return
+            this.getPositions(
+                field -> field.getType().equals(FieldType.FOOD) || field.getType().equals(FieldType.COLLISION_ON_FOOD)
+            ).size();
     }
 
     /**

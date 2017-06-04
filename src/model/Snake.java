@@ -2,6 +2,7 @@ package model;
 
 import java.awt.*;
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import control.*;
@@ -15,7 +16,7 @@ public class Snake {
     /**
      * Is the snake still alive?
      */
-    private boolean alive;
+    private final boolean alive;
 
     /**
      * The snake's color.
@@ -30,7 +31,7 @@ public class Snake {
     /**
      * The snake's current hunger.
      */
-    private int hunger;
+    private final int hunger;
 
     /**
      * The maximum hunger the snake can survive.
@@ -74,22 +75,28 @@ public class Snake {
         this.snake.offer(initialPosition);
     }
 
-
     /**
-     * Move this snake with a collision and without growth to the specified position. Also kill this snake.
-     * @param nextPos The next position of the snake's head.
+     * @param alive Is the snake still alive?
+     * @param color The snake's color.
+     * @param control The control for this snake.
+     * @param hunger The snake's current hunger.
+     * @param maxHunger The maximum hunger the snake can survive.
+     * @param snake The positions of the snake. The last one is the position of the snake's head.
      */
-    public void collisionMove(final Position nextPos) {
-        this.move(nextPos);
-        this.alive = false;
-    }
-
-
-    /**
-     * @return All positions of the snake's body.
-     */
-    public Collection<Position> getBody() {
-        return this.snake.stream().skip(1).filter(pos -> {return pos != null;}).collect(Collectors.toList());
+    private Snake(
+        final boolean alive,
+        final Color color,
+        final SnakeControl control,
+        final int hunger,
+        final Optional<Integer> maxHunger,
+        final LinkedList<Position> snake
+    ) {
+        this.alive = alive;
+        this.color = color;
+        this.control = control;
+        this.hunger = hunger;
+        this.maxHunger = maxHunger;
+        this.snake = snake;
     }
 
     /**
@@ -144,13 +151,22 @@ public class Snake {
     }
 
     /**
+     * @return All positions occupied by this snake.
+     */
+    public Collection<Position> getPositions() {
+        return this.snake;
+    }
+
+    /**
      * Move this snake without collision to the specified position and let it grow by one. Also remove any hunger from
      * this snake.
      * @param nextPos The next position of the snake's head.
+     * @return The moved and grown snake.
      */
-    public void growingMove(final Position nextPos) {
-        this.snake.offer(nextPos);
-        this.hunger = 0;
+    public Snake growingMove(final Position nextPos) {
+        final LinkedList<Position> newSnake = new LinkedList<Position>(this.snake);
+        newSnake.offer(nextPos);
+        return new Snake(this.alive, this.color, this.control, 0, this.maxHunger, newSnake);
     }
 
     /**
@@ -161,24 +177,46 @@ public class Snake {
     }
 
     /**
-     * Move this snake without collision or growth to the specified position. Also increase this snake's hunger by one.
-     * @param nextPos The next position of the snake's head.
+     * @return True if this snake's hunger exceeds the maximum hunger.
      */
-    public void normalMove(final Position nextPos) {
-        this.move(nextPos);
-        this.hunger++;
-        if (this.maxHunger.isPresent() && this.hunger > this.maxHunger.get()) {
-            this.alive = false;
-        }
+    public boolean isStarved() {
+        return this.maxHunger.isPresent() && this.maxHunger.get() < this.hunger;
     }
 
     /**
-     * Move this snake without growth to the specified position.
-     * @param nextPos The next position of the snake's head.
+     * @return This snake being dead.
      */
-    private void move(final Position nextPos) {
-        this.snake.poll();
-        this.snake.offer(nextPos);
+    public Snake kill() {
+        return new Snake(false, this.color, this.control, this.hunger, this.maxHunger, this.snake);
+    }
+
+    /**
+     * Move this snake without collision or growth to the specified position. Also increase this snake's hunger by one.
+     * @param nextPos The next position of the snake's head.
+     * @return The moved snake.
+     */
+    public Snake normalMove(final Position nextPos) {
+        final LinkedList<Position> newSnake = new LinkedList<Position>(this.snake);
+        newSnake.poll();
+        newSnake.offer(nextPos);
+        return new Snake(this.alive, this.color, this.control, this.hunger + 1, this.maxHunger, newSnake);
+    }
+
+    /**
+     * @return True if this snake collides with itself.
+     */
+    public boolean selfCollision() {
+        return
+            this
+            .getPositions()
+            .stream()
+            .filter(Objects::nonNull)
+            .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+            .values()
+            .stream()
+            .filter(num -> num > 1)
+            .findFirst()
+            .isPresent();
     }
 
 }
