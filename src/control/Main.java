@@ -26,21 +26,21 @@ public class Main {
                 new GlobalSettings(),
                 Arrays.asList(new RandomSnakeControl())
             );
-        final Maze maze =
-            new Maze(
-                new Field[][]{
-                    {
-                        new Field(FieldType.FREE, Optional.empty()),
-                        new Field(FieldType.WALL, Optional.empty()),
-                        new Field(FieldType.FOOD, Optional.empty())
-                    },
-                    {
-                        new Field(FieldType.SNAKE, Optional.of(new SnakePart(Color.RED, false))),
-                        new Field(FieldType.SNAKE, Optional.of(new SnakePart(Color.GREEN, true))),
-                        new Field(FieldType.COLLISION, Optional.empty())
-                    }
-                }
-            );
+//        final Maze maze =
+//            new Maze(
+//                new Field[][]{
+//                    {
+//                        new Field(FieldType.FREE, Optional.empty()),
+//                        new Field(FieldType.WALL, Optional.empty()),
+//                        new Field(FieldType.FOOD, Optional.empty())
+//                    },
+//                    {
+//                        new Field(FieldType.SNAKE, Optional.of(new SnakePart(Color.RED, false))),
+//                        new Field(FieldType.SNAKE, Optional.of(new SnakePart(Color.GREEN, true))),
+//                        new Field(FieldType.COLLISION, Optional.empty())
+//                    }
+//                }
+//            );
         content.add(
             new MazeDisplay(
 //                maze,
