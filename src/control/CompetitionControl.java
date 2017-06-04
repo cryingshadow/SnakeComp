@@ -190,6 +190,7 @@ public class CompetitionControl {
             .stream()
             .filter(Snake::isAlive)
             .collect(Collectors.toMap(Function.identity(), snake -> this.nextPositionOfSnake(snake, this.currentMaze)));
+        this.food.setAmount(this.settings.getFoodPerSnake() * nextPositionsOfSnakes.size());
         final Map<Position, Long> occurrences =
             nextPositionsOfSnakes
             .entrySet()
