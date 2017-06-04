@@ -2,6 +2,8 @@ package model;
 
 import java.util.*;
 
+import generators.*;
+
 /**
  * The collection of food in the current maze.
  * @author cryingshadow
@@ -18,6 +20,21 @@ public class Food {
      */
     public Food(final Collection<Position> food) {
         this.food = food;
+    }
+
+    /**
+     * @param foodGenerator
+     */
+    public Food(final FoodGenerator foodGenerator) {
+        this.food = new LinkedHashSet<Position>();
+    }
+
+    /**
+     * @param maze
+     */
+    public void generateFood(final Maze maze) {
+        // TODO Auto-generated method stub
+
     }
 
     /**

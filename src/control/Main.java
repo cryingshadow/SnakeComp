@@ -5,6 +5,7 @@ import java.util.*;
 
 import javax.swing.*;
 
+import control.samples.*;
 import model.*;
 import view.*;
 
@@ -20,7 +21,11 @@ public class Main {
     public static void main(final String[] args) {
         final JFrame frame = new JFrame("SnakeTest");
         final Container content = frame.getContentPane();
-        final CompetitionControl control = new CompetitionControl();
+        final CompetitionControl control =
+            new CompetitionControl(
+                new GlobalSettings(),
+                Arrays.asList(new RandomSnakeControl())
+            );
         final Maze maze =
             new Maze(
                 new Field[][]{

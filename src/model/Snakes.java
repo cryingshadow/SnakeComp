@@ -1,6 +1,7 @@
 package model;
 
 import java.util.*;
+import java.util.stream.*;
 
 /**
  * Collection of the snakes in the competition.
@@ -32,8 +33,11 @@ public class Snakes {
      * @return The snake at the specified position if there is exactly one such snake. Empty optional otherwise.
      */
     public Optional<Snake> getUniqueSnakeAt(final Position pos) {
-        // TODO Auto-generated method stub
-        return null;
+        final List<Snake> found = this.snakesAt(pos).collect(Collectors.toList());
+        if (found.size() == 1) {
+            return Optional.of(found.get(0));
+        }
+        return Optional.empty();
     }
 
     /**
@@ -41,8 +45,15 @@ public class Snakes {
      * @return True if at least one snake is at the specified position.
      */
     public boolean isSnake(final Position pos) {
-        // TODO Auto-generated method stub
-        return false;
+        return this.snakesAt(pos).findFirst().isPresent();
+    }
+
+    /**
+     * @param pos A position.
+     * @return A stream of snakes at the specified position.
+     */
+    private Stream<Snake> snakesAt(final Position pos) {
+        return this.snakes.stream().filter(snake -> {return snake.getHead().equals(pos);});
     }
 
 }

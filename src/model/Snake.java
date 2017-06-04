@@ -4,6 +4,8 @@ import java.awt.*;
 import java.util.*;
 import java.util.stream.*;
 
+import control.*;
+
 /**
  * A snake has a head that moves one field each turn and a body of a certain length that follows the head.
  * @author cryingshadow
@@ -21,6 +23,11 @@ public class Snake {
     private final Color color;
 
     /**
+     * The control for this snake.
+     */
+    private final SnakeControl control;
+
+    /**
      * The snake's current hunger.
      */
     private int hunger;
@@ -31,11 +38,6 @@ public class Snake {
     private final Optional<Integer> maxHunger;
 
     /**
-     * The snake's name.
-     */
-    private final String name;
-
-    /**
      * The positions of the snake. The last one is the position of the snake's head.
      */
     private final LinkedList<Position> snake;
@@ -44,15 +46,15 @@ public class Snake {
      * @param initialPosition The initial position of the snake's head.
      * @param initialLength The initial length of the snake.
      * @param maxHunger The maximum hunger the snake can survive.
-     * @param name The snake's name.
      * @param color The snake's color.
+     * @param control The control for this snake.
      */
     public Snake(
         final Position initialPosition,
         final int initialLength,
         final Optional<Integer> maxHunger,
-        final String name,
-        final Color color
+        final Color color,
+        final SnakeControl control
     ) {
         if (initialLength < 1) {
             throw new IllegalArgumentException("Length must be positive!");
@@ -60,7 +62,7 @@ public class Snake {
         if (maxHunger.isPresent() && maxHunger.get() < 1) {
             throw new IllegalArgumentException("Maximum hunger must be positive or null!");
         }
-        this.name = name;
+        this.control = control;
         this.color = color;
         this.alive = true;
         this.hunger = 0;
@@ -108,7 +110,16 @@ public class Snake {
      * @return The snake's name.
      */
     public String getName() {
-        return this.name;
+        return this.control.getName();
+    }
+
+    /**
+     * @param maze The maze.
+     * @return The direction in which to move next.
+     */
+    public Direction getNextDirection(final Maze maze) {
+        final Position curPos = this.getHead();
+        return this.control.nextDirection(maze, curPos.getX(), curPos.getY());
     }
 
     /**
