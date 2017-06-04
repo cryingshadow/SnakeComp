@@ -31,7 +31,7 @@ public class SnakeGenerator {
     public Collection<Snake> generateSnakes(
         final Collection<SnakeControl> snakeControls,
         final Maze maze,
-        final GlobalSettings settings
+        final Settings settings
     ) {
         final int numOfSnakes = snakeControls.size();
         if (SnakeGenerator.AVAILABLE_COLORS.length < numOfSnakes) {

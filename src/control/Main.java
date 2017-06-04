@@ -23,7 +23,7 @@ public class Main {
         final Container content = frame.getContentPane();
         final CompetitionControl control =
             new CompetitionControl(
-                new GlobalSettings(),
+                new Settings(),
                 Arrays.asList(new RandomSnakeControl())
             );
 //        final Maze maze =

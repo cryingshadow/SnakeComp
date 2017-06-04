@@ -66,7 +66,7 @@ public class CompetitionControl {
     /**
      * The settings.
      */
-    private final GlobalSettings settings;
+    private final Settings settings;
 
     /**
      * The snakes.
@@ -83,7 +83,7 @@ public class CompetitionControl {
      * @param settings The settings.
      * @param snakeControls The participating snake controls.
      */
-    public CompetitionControl(final GlobalSettings settings, final Collection<SnakeControl> snakeControls) {
+    public CompetitionControl(final Settings settings, final Collection<SnakeControl> snakeControls) {
         this.settings = settings;
         this.walls =
             new Walls(

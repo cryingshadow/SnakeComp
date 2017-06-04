@@ -3,10 +3,10 @@ package model;
 import java.util.*;
 
 /**
- * Global settings for a snake competition.
+ * Settings for a snake competition.
  * @author cryingshadow
  */
-public class GlobalSettings {
+public class Settings {
 
     /**
      * Is the maze to be an arena (i.e., having walls at the border of the maze)?
@@ -52,7 +52,7 @@ public class GlobalSettings {
     /**
      * Default settings.
      */
-    public GlobalSettings() {
+    public Settings() {
         this.fieldSize = 50;
         this.foodPerSnake = 1;
         this.arena = false;
