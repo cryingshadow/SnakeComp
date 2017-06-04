@@ -57,7 +57,7 @@ public class Settings {
         this.foodPerSnake = 1;
         this.arena = false;
         this.initialSnakeLength = 3;
-        this.maxHunger = Optional.of(1000);
+        this.maxHunger = Optional.of(400);
         this.height = 20;
         this.width = 20;
         this.walls = 50;

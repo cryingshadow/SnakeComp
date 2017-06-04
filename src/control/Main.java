@@ -24,7 +24,7 @@ public class Main {
         final CompetitionControl control =
             new CompetitionControl(
                 new Settings(),
-                Arrays.asList(new RandomSnakeControl(), new UpLeftSnakeControl(), new GreedySnakeControl())
+                Arrays.asList(new RandomSnakeControl(), new RotatingSnakeControl(), new GreedySnakeControl())
             );
         final MazeDisplay display = new MazeDisplay(control.getCurrentMaze(), 50);
         content.add(display);
@@ -43,13 +43,10 @@ public class Main {
             );
         frameThread.start();
         try {
-            for (int i = 0; i < 50; i++) {
-                Thread.sleep(500);
+            while (!control.over()) {
+                Thread.sleep(200);
                 control.turn();
                 display.setMaze(control.getCurrentMaze());
-                if (control.over()) {
-                    break;
-                }
             }
         } catch (final InterruptedException e) {
             e.printStackTrace();
