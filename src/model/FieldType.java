@@ -22,9 +22,19 @@ public enum FieldType {
     FREE,
 
     /**
-     * A free field with a part of a snake on it.
+     * A free field with a part of a snake body on it.
      */
-    SNAKE,
+    SNAKE_BODY,
+
+    /**
+     * A free field with a snake head on it.
+     */
+    SNAKE_HEAD,
+
+    /**
+     * A free field with an eating snake head on it.
+     */
+    SNAKE_HEAD_EATING,
 
     /**
      * A wall blocks movement. Snakes hitting a wall die.

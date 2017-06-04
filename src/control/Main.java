@@ -24,7 +24,7 @@ public class Main {
         final CompetitionControl control =
             new CompetitionControl(
                 new Settings(),
-                Arrays.asList(new RandomSnakeControl())
+                Arrays.asList(new RandomSnakeControl(), new RandomSnakeControl())
             );
 //        final Maze maze =
 //            new Maze(

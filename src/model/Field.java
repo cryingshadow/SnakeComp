@@ -1,17 +1,18 @@
 package model;
 
+import java.awt.*;
 import java.util.*;
 
 /**
- * A field has a type and possibly a snake part.
+ * A field has a type and possibly a snake color.
  * @author cryingshadow
  */
 public class Field {
 
     /**
-     * The snake part on this field.
+     * The snake color on this field.
      */
-    private final Optional<SnakePart> snakePart;
+    private final Optional<Color> snakeColor;
 
     /**
      * The type of this field.
@@ -20,18 +21,18 @@ public class Field {
 
     /**
      * @param type The type.
-     * @param snakePart The snake part on this field.
+     * @param snakeColor The snake color on this field.
      */
-    public Field(final FieldType type, final Optional<SnakePart> snakePart) {
+    public Field(final FieldType type, final Optional<Color> snakeColor) {
         this.type = type;
-        this.snakePart = snakePart;
+        this.snakeColor = snakeColor;
     }
 
     /**
-     * @return The snake part on this field.
+     * @return The snake color on this field.
      */
-    public Optional<SnakePart> getSnakePart() {
-        return this.snakePart;
+    public Optional<Color> getSnakeColor() {
+        return this.snakeColor;
     }
 
     /**

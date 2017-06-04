@@ -38,9 +38,16 @@ public class CompetitionControl {
                             curField = new Field(FieldType.COLLISION, Optional.empty());
                         } else {
                             final Snake actualSnake = snake.get();
-                            final SnakePart part =
-                                new SnakePart(actualSnake.getColor(), actualSnake.getHead().equals(curPos));
-                            curField = new Field(FieldType.SNAKE, Optional.of(part));
+                            if (actualSnake.getHead().equals(curPos)) {
+                                if (food.isFood(curPos)) {
+                                    curField =
+                                        new Field(FieldType.SNAKE_HEAD_EATING, Optional.of(actualSnake.getColor()));
+                                } else {
+                                    curField = new Field(FieldType.SNAKE_HEAD, Optional.of(actualSnake.getColor()));
+                                }
+                            } else {
+                                curField = new Field(FieldType.SNAKE_BODY, Optional.of(actualSnake.getColor()));
+                            }
                         }
                     } else {
                         curField = new Field(FieldType.COLLISION, Optional.empty());
