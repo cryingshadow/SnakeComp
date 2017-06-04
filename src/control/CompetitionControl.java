@@ -35,7 +35,7 @@ public class CompetitionControl {
                     final Optional<Snake> snake = snakes.getUniqueSnakeAt(curPos);
                     if (snake.isPresent()) {
                         if (walls.isWall(curPos)) {
-                            curField = new Field(FieldType.COLLISION, Optional.empty());
+                            curField = new Field(FieldType.COLLISION_ON_WALL, Optional.empty());
                         } else {
                             final Snake actualSnake = snake.get();
                             if (actualSnake.getHead().equals(curPos)) {
@@ -49,8 +49,10 @@ public class CompetitionControl {
                                 curField = new Field(FieldType.SNAKE_BODY, Optional.of(actualSnake.getColor()));
                             }
                         }
+                    } else if (food.isFood(curPos)) {
+                        curField = new Field(FieldType.COLLISION_ON_FOOD, Optional.empty());
                     } else {
-                        curField = new Field(FieldType.COLLISION, Optional.empty());
+                        curField = new Field(FieldType.COLLISION_ON_FREE, Optional.empty());
                     }
                 } else if (walls.isWall(curPos)) {
                     curField = new Field(FieldType.WALL, Optional.empty());

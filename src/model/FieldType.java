@@ -7,9 +7,19 @@ package model;
 public enum FieldType {
 
     /**
-     * A collision between a snake and a wall or another snake.
+     * A collision between at least two snakes on a field with food.
      */
-    COLLISION,
+    COLLISION_ON_FOOD,
+
+    /**
+     * A collision between at least two snakes on an otherwise free field.
+     */
+    COLLISION_ON_FREE,
+
+    /**
+     * A collision between a snake and a wall.
+     */
+    COLLISION_ON_WALL,
 
     /**
      * A free field with food on it.

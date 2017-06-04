@@ -61,7 +61,9 @@ public class MazeDisplay extends JPanel {
         MazeDisplay.paintFieldBackground(g, x, y, size, MazeDisplay.BACKGROUND);
         final Optional<Color> snakeColor = field.getSnakeColor();
         switch (field.getType()) {
-            case COLLISION:
+            case COLLISION_ON_FOOD:
+            case COLLISION_ON_FREE:
+            case COLLISION_ON_WALL:
                 MazeDisplay.paintFieldBackground(g, x, y, size, MazeDisplay.COLLISION);
                 break;
             case FOOD:
