@@ -167,6 +167,13 @@ public class CompetitionControl {
     }
 
     /**
+     * @return The snakes.
+     */
+    public Snakes getSnakes() {
+        return this.snakes;
+    }
+
+    /**
      * @return True if the competition is over.
      */
     public boolean over() {

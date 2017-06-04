@@ -16,7 +16,7 @@ public class MazeDisplay extends JPanel {
     /**
      * The color of a free field.
      */
-    private static final Color BACKGROUND = Color.BLACK;
+    public static final Color BACKGROUND = Color.BLACK;
 
     /**
      * The color of a collision.

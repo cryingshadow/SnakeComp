@@ -12,9 +12,21 @@ import control.*;
  */
 public class GreedySnakeControl implements SnakeControl {
 
+    /**
+     * The snake's name.
+     */
+    private final String name;
+
+    /**
+     * @param name The snake's name.
+     */
+    public GreedySnakeControl(final String name) {
+        this.name = name;
+    }
+
     @Override
     public String getName() {
-        return "Greedy";
+        return this.name;
     }
 
     @Override

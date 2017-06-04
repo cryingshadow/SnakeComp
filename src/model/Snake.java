@@ -114,6 +114,13 @@ public class Snake {
     }
 
     /**
+     * @return The length of this snake.
+     */
+    public int getLength() {
+        return this.snake.size();
+    }
+
+    /**
      * @return The snake's name.
      */
     public String getName() {

@@ -20,15 +20,24 @@ public class Main {
      */
     public static void main(final String[] args) {
         final JFrame frame = new JFrame("SnakeTest");
-        final Container content = frame.getContentPane();
+        final JPanel content = new JPanel();
+        final JScrollPane scroll = new JScrollPane(content);
+        scroll.setPreferredSize(new Dimension(1200, 1020));
+        frame.getContentPane().add(scroll);
         final CompetitionControl control =
             new CompetitionControl(
                 new Settings(),
-                Arrays.asList(new RandomSnakeControl(), new RotatingSnakeControl(), new GreedySnakeControl())
+                Arrays.asList(
+                    new GreedySnakeControl("Guenni"),
+                    new GreedySnakeControl("Zebra"),
+                    new GreedySnakeControl("Einhorn")
+                )
             );
-        final MazeDisplay display = new MazeDisplay(control.getCurrentMaze(), 50);
-        content.add(display);
-        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        final MazeDisplay mazeDisplay = new MazeDisplay(control.getCurrentMaze(), 50);
+        final SnakesDisplay snakeDisplay = new SnakesDisplay(control.getSnakes());
+        content.add(mazeDisplay);
+        content.add(snakeDisplay);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
         final Thread frameThread =
             new Thread(
@@ -44,9 +53,10 @@ public class Main {
         frameThread.start();
         try {
             while (!control.over()) {
-                Thread.sleep(200);
+                Thread.sleep(300);
                 control.turn();
-                display.setMaze(control.getCurrentMaze());
+                mazeDisplay.setMaze(control.getCurrentMaze());
+                snakeDisplay.setSnakes(control.getSnakes());
             }
         } catch (final InterruptedException e) {
             e.printStackTrace();
