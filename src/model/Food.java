@@ -49,8 +49,7 @@ public class Food {
      * @return True if food is at the specified position.
      */
     public boolean isFood(final Position pos) {
-        // TODO Auto-generated method stub
-        return false;
+        return this.food.stream().filter(foodPos -> foodPos.equals(pos)).findFirst().isPresent();
     }
 
 }
