@@ -24,23 +24,8 @@ public class Main {
         final CompetitionControl control =
             new CompetitionControl(
                 new Settings(),
-                Arrays.asList(new RandomSnakeControl(), new RandomSnakeControl())
+                Arrays.asList(new RandomSnakeControl(), new UpLeftSnakeControl(), new GreedySnakeControl())
             );
-//        final Maze maze =
-//            new Maze(
-//                new Field[][]{
-//                    {
-//                        new Field(FieldType.FREE, Optional.empty()),
-//                        new Field(FieldType.WALL, Optional.empty()),
-//                        new Field(FieldType.FOOD, Optional.empty())
-//                    },
-//                    {
-//                        new Field(FieldType.SNAKE, Optional.of(new SnakePart(Color.RED, false))),
-//                        new Field(FieldType.SNAKE, Optional.of(new SnakePart(Color.GREEN, true))),
-//                        new Field(FieldType.COLLISION, Optional.empty())
-//                    }
-//                }
-//            );
         final MazeDisplay display = new MazeDisplay(control.getCurrentMaze(), 50);
         content.add(display);
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -62,6 +47,9 @@ public class Main {
                 Thread.sleep(500);
                 control.turn();
                 display.setMaze(control.getCurrentMaze());
+                if (control.over()) {
+                    break;
+                }
             }
         } catch (final InterruptedException e) {
             e.printStackTrace();

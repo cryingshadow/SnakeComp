@@ -29,6 +29,13 @@ public class Maze {
     }
 
     /**
+     * @return The positions with food on them that is not being eaten.
+     */
+    public Collection<Position> getFood() {
+        return this.getPositions(field -> field.getType().equals(FieldType.FOOD));
+    }
+
+    /**
      * @return The free positions in this maze.
      */
     public List<Position> getFreePositions() {
@@ -43,20 +50,10 @@ public class Maze {
     }
 
     /**
-     * @return The number of fields with food in this maze.
-     */
-    public int numOfFood() {
-        return
-            this.getPositions(
-                field -> field.getType().equals(FieldType.FOOD) || field.getType().equals(FieldType.COLLISION_ON_FOOD)
-            ).size();
-    }
-
-    /**
      * @param predicate Some predicate on fields.
      * @return The positions of the fields satisfying the predicate.
      */
-    private List<Position> getPositions(final Predicate<Field> predicate) {
+    public List<Position> getPositions(final Predicate<Field> predicate) {
         final List<Position> res = new LinkedList<Position>();
         for (int y = 0; y < this.maze.length; y++) {
             final Field[] mazeRow = this.maze[y];
@@ -67,6 +64,16 @@ public class Maze {
             }
         }
         return res;
+    }
+
+    /**
+     * @return The number of fields with food in this maze.
+     */
+    public int numOfFood() {
+        return
+            this.getPositions(
+                field -> field.getType().equals(FieldType.FOOD) || field.getType().equals(FieldType.COLLISION_ON_FOOD)
+            ).size();
     }
 
 }

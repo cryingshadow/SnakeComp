@@ -167,6 +167,13 @@ public class CompetitionControl {
     }
 
     /**
+     * @return True if the competition is over.
+     */
+    public boolean over() {
+        return this.snakes.getAliveSnakes().isEmpty();
+    }
+
+    /**
      * Perform one turn of the competition.
      */
     public void turn() {
