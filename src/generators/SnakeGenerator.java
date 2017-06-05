@@ -15,7 +15,18 @@ public class SnakeGenerator {
     /**
      * The colors for snakes.
      */
-    private static final Color[] AVAILABLE_COLORS = {Color.RED, Color.GREEN, Color.BLUE};
+    private static final Color[] AVAILABLE_COLORS = {
+        Color.RED,
+        Color.GREEN,
+        Color.BLUE,
+        Color.MAGENTA,
+        Color.CYAN,
+        Color.ORANGE,
+        Color.PINK,
+        new Color(150, 0, 0),
+        Color.LIGHT_GRAY,
+        new Color(0, 100, 0)
+    };
 
     /**
      * Random number generator.
