@@ -1,9 +1,11 @@
 package view;
 
+import java.awt.Font;
 import java.awt.Component;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.border.*;
 import javax.swing.event.*;
 
 import model.*;
@@ -13,6 +15,11 @@ import model.*;
  * @author cryingshadow
  */
 public class SnakesDisplay extends JPanel {
+
+    /**
+     * The size of
+     */
+    private static final int BORDER_SIZE = 10;
 
     /**
      * For serialization.
@@ -46,9 +53,18 @@ public class SnakesDisplay extends JPanel {
                 text.append("): ");
                 text.append(value.isAlive() ? "ALIVE" : "DEAD");
                 final JLabel res = new JLabel(text.toString());
+                res.setFont(new Font("Serif", Font.BOLD, 24));
                 res.setForeground(value.getColor());
                 res.setBackground(MazeDisplay.BACKGROUND);
                 res.setOpaque(true);
+                res.setBorder(
+                    new EmptyBorder(
+                        index == 0 ? SnakesDisplay.BORDER_SIZE: 0,
+                        SnakesDisplay.BORDER_SIZE,
+                        index == list.getModel().getSize() - 1 ? SnakesDisplay.BORDER_SIZE : 0,
+                        SnakesDisplay.BORDER_SIZE
+                    )
+                );
                 return res;
             }
 
