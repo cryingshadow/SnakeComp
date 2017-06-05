@@ -37,32 +37,16 @@ public class SettingsDisplay extends JPanel {
         this.settings = initialSettings;
         this.turnControl = turnControl;
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        this.addSpeedChooser();
-        this.addManualTurnButton();
-    }
-
-    /**
-     * Adds a button for invoking a manual turn.
-     */
-    private void addManualTurnButton() {
-        final JButton button = new JButton("NEXT TURN");
-        button.addActionListener(
-            new ActionListener(){
-
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    SettingsDisplay.this.turnControl.turn();
-                }
-
-            }
-        );
-        this.add(button);
+        final JButton turnButton = this.createManualTurnButton();
+        this.addSpeedChooser(turnButton);
+        this.add(turnButton);
     }
 
     /**
      * Adds a speed chooser to this panel.
+     * @param turnButton The button for manual turn invocation.
      */
-    private void addSpeedChooser() {
+    private void addSpeedChooser(final JButton turnButton) {
         final JComboBox<Speed> speedChooser =
             new JComboBox<Speed>(new Speed[]{Speed.MANUAL, Speed.SLOW, Speed.NORMAL, Speed.FAST, Speed.RACING});
         speedChooser.setSelectedItem(this.settings.getSpeed());
@@ -78,6 +62,10 @@ public class SettingsDisplay extends JPanel {
                         synchronized (SettingsDisplay.this.turnControl) {
                             SettingsDisplay.this.turnControl.notifyAll();
                         }
+                        turnButton.setEnabled(false);
+                    }
+                    if (newSpeed.equals(Speed.MANUAL)) {
+                        turnButton.setEnabled(true);
                     }
                 }
 
@@ -87,6 +75,25 @@ public class SettingsDisplay extends JPanel {
         speedChooserPanel.add(new JLabel("Speed:"));
         speedChooserPanel.add(speedChooser);
         this.add(speedChooserPanel);
+    }
+
+    /**
+     * @return A button for invoking a manual turn.
+     */
+    private JButton createManualTurnButton() {
+        final JButton button = new JButton("NEXT TURN");
+        button.addActionListener(
+            new ActionListener(){
+
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    SettingsDisplay.this.turnControl.turn();
+                }
+
+            }
+        );
+        button.setEnabled(this.settings.getSpeed().equals(Speed.MANUAL));
+        return button;
     }
 
 }
