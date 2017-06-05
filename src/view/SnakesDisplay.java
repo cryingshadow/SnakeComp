@@ -17,7 +17,7 @@ import model.*;
 public class SnakesDisplay extends JPanel {
 
     /**
-     * The size of
+     * The size of the padding around the snake status display.
      */
     private static final int BORDER_SIZE = 10;
 
