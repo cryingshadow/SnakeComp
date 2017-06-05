@@ -48,7 +48,16 @@ public class SettingsDisplay extends JPanel {
      */
     private void addSpeedChooser(final JButton turnButton) {
         final JComboBox<Speed> speedChooser =
-            new JComboBox<Speed>(new Speed[]{Speed.MANUAL, Speed.SLOW, Speed.NORMAL, Speed.FAST, Speed.RACING});
+            new JComboBox<Speed>(
+                new Speed[]{
+                    Speed.MANUAL,
+                    Speed.SLOWEST,
+                    Speed.SLOW,
+                    Speed.NORMAL,
+                    Speed.FAST,
+                    Speed.RACING
+                }
+            );
         speedChooser.setSelectedItem(this.settings.getSpeed());
         speedChooser.addActionListener(
             new ActionListener(){

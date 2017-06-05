@@ -7,9 +7,9 @@ package model;
 public enum Speed {
 
     /**
-     * Three turns per second.
+     * Five turns per second.
      */
-    FAST(300),
+    FAST(200),
 
     /**
      * Execution by manual clicks.
@@ -17,9 +17,9 @@ public enum Speed {
     MANUAL(-1),
 
     /**
-     * Two turns per second.
+     * Three turns per second.
      */
-    NORMAL(500),
+    NORMAL(300),
 
     /**
      * Ten turns per second.
@@ -27,9 +27,14 @@ public enum Speed {
     RACING(100),
 
     /**
+     * Two turns per second.
+     */
+    SLOW(500),
+
+    /**
      * One turn per second.
      */
-    SLOW(1000);
+    SLOWEST(1000);
 
     /**
      * The time to sleep between turns in milliseconds.
