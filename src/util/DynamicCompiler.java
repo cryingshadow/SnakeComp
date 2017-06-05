@@ -1,4 +1,4 @@
-package control;
+package util;
 
 import java.io.*;
 import java.net.*;
@@ -6,6 +6,8 @@ import java.util.*;
 import java.util.stream.*;
 
 import javax.tools.*;
+
+import control.*;
 
 /**
  * Dynamic compiler for snake controls based on https://stackoverflow.com/a/21544850.
@@ -17,15 +19,14 @@ public class DynamicCompiler {
      * @param directory The directory holding the snake controls for a competition.
      * @return The compiled and loaded snake controls.
      */
-    public static List<SnakeControl> compileAndLoad(final String directory) {
+    public static List<SnakeControl> compileAndLoad(final File directory) {
         final List<SnakeControl> res = new LinkedList<SnakeControl>();
-        final File root = new File(directory);
-        if (!root.exists()) {
+        if (!directory.exists()) {
             throw new IllegalArgumentException("Directory not found!");
         }
         final List<File> sourceFiles =
             Arrays
-            .asList(root.listFiles())
+            .asList(directory.listFiles())
             .stream()
             .filter(f -> f.getName().endsWith(".java"))
             .collect(Collectors.toList());
