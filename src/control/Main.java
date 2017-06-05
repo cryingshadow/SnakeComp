@@ -1,6 +1,7 @@
 package control;
 
 import java.awt.*;
+import java.io.*;
 import java.util.List;
 
 import javax.swing.*;
@@ -20,40 +21,28 @@ public class Main {
      */
     public static void main(final String[] args) {
         final JFrame frame = new JFrame("SnakeTest");
-        final JPanel content = new JPanel();
+        final JPanel content = new JPanel(new FlowLayout());
+        final JPanel statsAndControls = new JPanel();
+        statsAndControls.setLayout(new BoxLayout(statsAndControls, BoxLayout.Y_AXIS));
         final JScrollPane scroll = new JScrollPane(content);
         scroll.setPreferredSize(new Dimension(1300, 1020));
         frame.getContentPane().add(scroll);
-        final List<SnakeControl> snakeControls = DynamicCompiler.compileAndLoad(args[0]);
-        final CompetitionControl control = new CompetitionControl(new Settings(), snakeControls);
+        final Settings settings = new Settings();
+        final List<SnakeControl> snakeControls = DynamicCompiler.compileAndLoad(new File(args[0]));
+        final CompetitionControl control = new CompetitionControl(settings, snakeControls);
         final MazeDisplay mazeDisplay = new MazeDisplay(control.getCurrentMaze(), 50);
-        final SnakesDisplay snakeDisplay = new SnakesDisplay(control.getSnakes());
+        final SnakesDisplay snakesDisplay = new SnakesDisplay(control.getSnakes());
+        final TurnControl turnControl = new TurnControl(settings, control, mazeDisplay, snakesDisplay);
+        final SettingsDisplay settingsDisplay = new SettingsDisplay(settings, turnControl);
+        statsAndControls.add(snakesDisplay);
+        statsAndControls.add(settingsDisplay);
         content.add(mazeDisplay);
-        content.add(snakeDisplay);
+        content.add(statsAndControls);
+        final Thread turnThread = new Thread(turnControl);
+        turnThread.start();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
-        final Thread frameThread =
-            new Thread(
-                new Runnable(){
-
-                    @Override
-                    public void run() {
-                        frame.setVisible(true);
-                    }
-
-                }
-            );
-        frameThread.start();
-        try {
-            while (!control.over()) {
-                Thread.sleep(300);
-                control.turn();
-                mazeDisplay.setMaze(control.getCurrentMaze());
-                snakeDisplay.setSnakes(control.getSnakes());
-            }
-        } catch (final InterruptedException e) {
-            e.printStackTrace();
-        }
+        frame.setVisible(true);
     }
 
 }

@@ -39,10 +39,14 @@ public class Settings {
     private Optional<Integer> maxHunger;
 
     /**
+     * The speed of the competition execution.
+     */
+    private Speed speed;
+
+    /**
      * The number of walls in the maze (without the arena walls if set).
      */
     private int walls;
-
 
     /**
      * The width of the maze.
@@ -61,6 +65,7 @@ public class Settings {
         this.height = 20;
         this.width = 20;
         this.walls = 50;
+        this.setSpeed(Speed.NORMAL);
     }
 
     /**
@@ -96,6 +101,13 @@ public class Settings {
      */
     public Optional<Integer> getMaxHunger() {
         return this.maxHunger;
+    }
+
+    /**
+     * @return The speed of the competition execution.
+     */
+    public Speed getSpeed() {
+        return this.speed;
     }
 
     /**
@@ -159,6 +171,13 @@ public class Settings {
      */
     public void setMaxHunger(final Optional<Integer> maxHunger) {
         this.maxHunger = maxHunger;
+    }
+
+    /**
+     * @param speed The speed of the competition execution.
+     */
+    public void setSpeed(final Speed speed) {
+        this.speed = speed;
     }
 
     /**
