@@ -23,6 +23,9 @@ public class MazeGenerator {
      * @return A collection of positions for the walls in the maze.
      */
     public Collection<Position> generateMaze(final int width, final int height, final boolean arena, final int walls) {
+        if (walls > width * height) {
+            throw new IllegalArgumentException("Not enough fields to place the walls!");
+        }
         final Set<Position> result = new LinkedHashSet<Position>();
         final int offset;
         final int total;

@@ -18,9 +18,38 @@ import model.*;
 public class SettingsDisplay extends JPanel {
 
     /**
+     * The maximum number of fields in a dimension.
+     */
+    private static final int MAXIMUM_DIMENSION = 1000;
+
+    /**
+     * The minimum number of fields in a dimension.
+     */
+    private static final int MINIMUM_DIMENSION = 5;
+
+    /**
      * For serialization.
      */
     private static final long serialVersionUID = -6697575997683663504L;
+
+    /**
+     * @param title The title.
+     * @param comp The component.
+     * @return The specified component with a title label in front of it.
+     */
+    private static JPanel addTitle(final String title, final Component comp) {
+        final JPanel res = new JPanel(new GridBagLayout());
+        final GridBagConstraints c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 0;
+        c.weightx = 0.0;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        res.add(new JLabel(title + ": "), c);
+        c.gridx = 1;
+        c.weightx = 1.0;
+        res.add(comp, c);
+        return res;
+    }
 
     /**
      * @param sourceDirectory The source directory.
@@ -74,11 +103,10 @@ public class SettingsDisplay extends JPanel {
      * Adds a panel for maze initialization (yet without snakes and food) and configuration.
      */
     private void addMazePanel() {
-        final JPanel mazePanel = new JPanel(new GridLayout(2, 1));
+        final JPanel mazePanel = new JPanel(new GridLayout(4, 1));
         mazePanel.setBorder(BorderFactory.createTitledBorder("Maze"));
         final JComboBox<Zoom> zoom =
             new JComboBox<Zoom>(new Zoom[]{Zoom.HUGE, Zoom.BIG, Zoom.NORMAL, Zoom.SMALL, Zoom.TINY});
-        zoom.setToolTipText("Zoom");
         zoom.setSelectedItem(this.settings.getZoom());
         zoom.addActionListener(
             new ActionListener(){
@@ -90,6 +118,44 @@ public class SettingsDisplay extends JPanel {
                     } catch (final Exception e) {
                         ExceptionDisplay.showException(SettingsDisplay.this, e);
                     }
+                }
+
+            }
+        );
+        final JSpinner width =
+            new JSpinner(
+                new SpinnerNumberModel(
+                    this.settings.getWidth(),
+                    SettingsDisplay.MINIMUM_DIMENSION,
+                    SettingsDisplay.MAXIMUM_DIMENSION,
+                    1
+                )
+            );
+        width.addChangeListener(
+            new ChangeListener() {
+
+                @Override
+                public void stateChanged(final ChangeEvent e) {
+                    SettingsDisplay.this.settings.setWidth((Integer)width.getModel().getValue());
+                }
+
+            }
+        );
+        final JSpinner height =
+            new JSpinner(
+                new SpinnerNumberModel(
+                    this.settings.getHeight(),
+                    SettingsDisplay.MINIMUM_DIMENSION,
+                    SettingsDisplay.MAXIMUM_DIMENSION,
+                    1
+                )
+            );
+        height.addChangeListener(
+            new ChangeListener() {
+
+                @Override
+                public void stateChanged(final ChangeEvent e) {
+                    SettingsDisplay.this.settings.setHeight((Integer)height.getModel().getValue());
                 }
 
             }
@@ -119,7 +185,9 @@ public class SettingsDisplay extends JPanel {
 
             }
         );
-        mazePanel.add(zoom);
+        mazePanel.add(SettingsDisplay.addTitle("Zoom", zoom));
+        mazePanel.add(SettingsDisplay.addTitle("Width", width));
+        mazePanel.add(SettingsDisplay.addTitle("Height", height));
         mazePanel.add(generateButton);
         this.addWithHorizontalFill(mazePanel);
     }
