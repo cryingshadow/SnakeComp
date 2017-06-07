@@ -137,7 +137,7 @@ public class SettingsDisplay extends JPanel {
      * Adds a panel for maze initialization (yet without snakes and food) and configuration.
      */
     private void addMazePanel() {
-        final JPanel mazePanel = new JPanel(new GridLayout(5, 1));
+        final JPanel mazePanel = new JPanel(new GridLayout(6, 1));
         mazePanel.setBorder(BorderFactory.createTitledBorder("Maze"));
         final JComboBox<Zoom> zoom =
             new JComboBox<Zoom>(new Zoom[]{Zoom.HUGE, Zoom.BIG, Zoom.NORMAL, Zoom.SMALL, Zoom.TINY});
@@ -152,6 +152,17 @@ public class SettingsDisplay extends JPanel {
                     } catch (final Exception e) {
                         ExceptionDisplay.showException(SettingsDisplay.this, e);
                     }
+                }
+
+            }
+        );
+        final JCheckBox arena = new JCheckBox("Arena", this.settings.isArena());
+        arena.addActionListener(
+            new ActionListener() {
+
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    SettingsDisplay.this.settings.setArena(arena.isSelected());
                 }
 
             }
@@ -212,6 +223,7 @@ public class SettingsDisplay extends JPanel {
                 this.settings::setWalls
             )
         );
+        mazePanel.add(arena);
         mazePanel.add(generateButton);
         this.addWithHorizontalFill(mazePanel);
     }
