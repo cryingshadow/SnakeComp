@@ -74,7 +74,7 @@ public class SettingsDisplay extends JPanel {
      * Adds a panel for maze initialization (yet without snakes and food).
      */
     private void addMazeInitializer() {
-        final JPanel mazeInitializer = new JPanel();
+        final JPanel mazeInitializer = new JPanel(new GridLayout(1, 1));
         mazeInitializer.setBorder(BorderFactory.createTitledBorder("Maze"));
         final JButton generateButton = new JButton("NEW MAZE");
         generateButton.addActionListener(
@@ -106,37 +106,10 @@ public class SettingsDisplay extends JPanel {
      * @param initButton The button for initialization of the maze.
      */
     private void addSourceDirectoryChooser() {
-        final JPanel sourceDirectoryChooser = new JPanel();
+        final JPanel sourceDirectoryChooser = new JPanel(new GridLayout(2, 1));
         sourceDirectoryChooser.setBorder(BorderFactory.createTitledBorder("Source Directory"));
-        sourceDirectoryChooser.setLayout(new GridLayout(3, 1));
         final JLabel currentFile =
             new JLabel(SettingsDisplay.labelTextFromSourceDirectory(this.settings.getSourceDirectory()));
-        final JButton startButton = new JButton("START");
-        startButton.addActionListener(
-            new ActionListener(){
-
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    SettingsDisplay.this.competitionControl.startCompetition();
-                }
-
-            }
-        );
-        startButton.setEnabled(!this.competition.isRunning() && this.settings.getSourceDirectory().isPresent());
-        final ChangeListener startButtonEnabler =
-            new ChangeListener() {
-
-                @Override
-                public void stateChanged(final ChangeEvent e) {
-                    startButton.setEnabled(
-                        !SettingsDisplay.this.competition.isRunning()
-                        && SettingsDisplay.this.settings.getSourceDirectory().isPresent()
-                    );
-                }
-
-            };
-        this.competition.addChangeListener(startButtonEnabler);
-        this.settings.addChangeListener(startButtonEnabler);
         final JButton chooseButton = new JButton("Browse");
         final JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle("Choose source directory");
@@ -178,7 +151,6 @@ public class SettingsDisplay extends JPanel {
         );
         sourceDirectoryChooser.add(currentFile);
         sourceDirectoryChooser.add(chooseButton);
-        sourceDirectoryChooser.add(startButton);
         this.addWithHorizontalFill(sourceDirectoryChooser);
     }
 
