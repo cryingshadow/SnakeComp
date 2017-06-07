@@ -62,8 +62,12 @@ public class CompetitionDisplay extends JPanel {
             new ActionListener(){
 
                 @Override
-                public void actionPerformed(final ActionEvent e) {
-                    CompetitionDisplay.this.competitionControl.startCompetition();
+                public void actionPerformed(final ActionEvent event) {
+                    try {
+                        CompetitionDisplay.this.competitionControl.startCompetition();
+                    } catch (final Exception e) {
+                        ExceptionDisplay.showException(CompetitionDisplay.this, e);
+                    }
                 }
 
             }

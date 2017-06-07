@@ -81,8 +81,12 @@ public class SettingsDisplay extends JPanel {
             new ActionListener(){
 
                 @Override
-                public void actionPerformed(final ActionEvent e) {
-                    SettingsDisplay.this.competitionControl.generateMaze();
+                public void actionPerformed(final ActionEvent event) {
+                    try {
+                        SettingsDisplay.this.competitionControl.generateMaze();
+                    } catch (final Exception e) {
+                        ExceptionDisplay.showException(SettingsDisplay.this, e);
+                    }
                 }
 
             }
@@ -119,9 +123,13 @@ public class SettingsDisplay extends JPanel {
             new ActionListener(){
 
                 @Override
-                public void actionPerformed(final ActionEvent e) {
+                public void actionPerformed(final ActionEvent event) {
                     if (chooser.showOpenDialog(SettingsDisplay.this) == JFileChooser.APPROVE_OPTION) {
-                        SettingsDisplay.this.settings.setSourceDirectory(Optional.of(chooser.getSelectedFile()));
+                        try {
+                            SettingsDisplay.this.settings.setSourceDirectory(Optional.of(chooser.getSelectedFile()));
+                        } catch (final Exception e) {
+                            ExceptionDisplay.showException(SettingsDisplay.this, e);
+                        }
                     }
                 }
 
@@ -154,8 +162,12 @@ public class SettingsDisplay extends JPanel {
             new ActionListener(){
 
                 @Override
-                public void actionPerformed(final ActionEvent e) {
-                    SettingsDisplay.this.competitionControl.loadSnakes();
+                public void actionPerformed(final ActionEvent event) {
+                    try {
+                        SettingsDisplay.this.competitionControl.loadSnakes();
+                    } catch (final Exception e) {
+                        ExceptionDisplay.showException(SettingsDisplay.this, e);
+                    }
                 }
 
             }
@@ -203,8 +215,12 @@ public class SettingsDisplay extends JPanel {
             new ActionListener(){
 
                 @Override
-                public void actionPerformed(final ActionEvent e) {
-                    SettingsDisplay.this.settings.setSpeed((Speed)speedChooser.getSelectedItem());
+                public void actionPerformed(final ActionEvent event) {
+                    try {
+                        SettingsDisplay.this.settings.setSpeed((Speed)speedChooser.getSelectedItem());
+                    } catch (final Exception e) {
+                        ExceptionDisplay.showException(SettingsDisplay.this, e);
+                    }
                 }
 
             }
@@ -238,8 +254,12 @@ public class SettingsDisplay extends JPanel {
             new ActionListener(){
 
                 @Override
-                public void actionPerformed(final ActionEvent e) {
-                    SettingsDisplay.this.competitionControl.turn();
+                public void actionPerformed(final ActionEvent event) {
+                    try {
+                        SettingsDisplay.this.competitionControl.turn();
+                    } catch (final Exception e) {
+                        ExceptionDisplay.showException(SettingsDisplay.this, e);
+                    }
                 }
 
             }

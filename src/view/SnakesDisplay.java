@@ -167,18 +167,22 @@ public class SnakesDisplay extends JPanel {
                 new ChangeListener() {
 
                     @Override
-                    public void stateChanged(final ChangeEvent e) {
-                        final int newSize = snakes.getAllSnakes().size();
-                        final int oldSize = SnakeListModel.this.size;
-                        SnakeListModel.this.size = newSize;
-                        SnakeListModel.this.notify(
-                            new ListDataEvent(
-                                e.getSource(),
-                                ListDataEvent.CONTENTS_CHANGED,
-                                0,
-                                Math.max(oldSize, newSize) - 1
-                            )
-                        );
+                    public void stateChanged(final ChangeEvent event) {
+                        try {
+                            final int newSize = snakes.getAllSnakes().size();
+                            final int oldSize = SnakeListModel.this.size;
+                            SnakeListModel.this.size = newSize;
+                            SnakeListModel.this.notify(
+                                new ListDataEvent(
+                                    event.getSource(),
+                                    ListDataEvent.CONTENTS_CHANGED,
+                                    0,
+                                    Math.max(oldSize, newSize) - 1
+                                )
+                            );
+                        } catch (final Exception e) {
+                            ExceptionDisplay.showException(null, e);
+                        }
                     }
 
                 }
