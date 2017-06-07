@@ -1,8 +1,8 @@
 package view;
 
-import java.awt.Font;
-import java.awt.Component;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -25,6 +25,28 @@ public class SnakesDisplay extends JPanel {
      * For serialization.
      */
     private static final long serialVersionUID = 2351787889773240171L;
+
+    /**
+     * Configures the specified label.
+     * @param label The label to be configured.
+     * @param list The list of entries to configure such a label for.
+     * @param index The index of the entry in the list for which to configure the label.
+     * @param color The foreground color of the label.
+     */
+    private static void configureLabel(final JLabel label, final JList<? extends Snake> list, final int index, final Color color) {
+        label.setFont(new Font("Serif", Font.BOLD, 24));
+        label.setForeground(color);
+        label.setBackground(MazeDisplay.BACKGROUND);
+        label.setOpaque(true);
+        label.setBorder(
+            new EmptyBorder(
+                index == 0 ? SnakesDisplay.BORDER_SIZE: 0,
+                SnakesDisplay.BORDER_SIZE,
+                index == list.getModel().getSize() - 1 ? SnakesDisplay.BORDER_SIZE : 0,
+                SnakesDisplay.BORDER_SIZE
+            )
+        );
+    }
 
     /**
      * Data model for snakes.
@@ -66,6 +88,11 @@ public class SnakesDisplay extends JPanel {
                 final boolean isSelected,
                 final boolean cellHasFocus
             ) {
+                if (value == null) {
+                    final JLabel res = new JLabel("no snakes");
+                    SnakesDisplay.configureLabel(res, list, index, Color.WHITE);
+                    return res;
+                }
                 final StringBuilder text = new StringBuilder();
                 text.append(value.getName());
                 text.append(" (");
@@ -73,18 +100,7 @@ public class SnakesDisplay extends JPanel {
                 text.append("): ");
                 text.append(value.isAlive() ? "ALIVE" : "DEAD");
                 final JLabel res = new JLabel(text.toString());
-                res.setFont(new Font("Serif", Font.BOLD, 24));
-                res.setForeground(value.getColor());
-                res.setBackground(MazeDisplay.BACKGROUND);
-                res.setOpaque(true);
-                res.setBorder(
-                    new EmptyBorder(
-                        index == 0 ? SnakesDisplay.BORDER_SIZE: 0,
-                        SnakesDisplay.BORDER_SIZE,
-                        index == list.getModel().getSize() - 1 ? SnakesDisplay.BORDER_SIZE : 0,
-                        SnakesDisplay.BORDER_SIZE
-                    )
-                );
+                SnakesDisplay.configureLabel(res, list, index, value.getColor());
                 return res;
             }
 
@@ -92,9 +108,9 @@ public class SnakesDisplay extends JPanel {
         final JList<Snake> list = new JList<Snake>(this.model);
         list.setSelectionModel(new NoSelectionModel());
         list.setCellRenderer(renderer);
-        list.setBorder(BorderFactory.createTitledBorder("Snake Status"));
         list.setOpaque(false);
         this.add(list);
+        this.setBorder(BorderFactory.createTitledBorder("Snake Status"));
     }
 
     /**
@@ -176,12 +192,15 @@ public class SnakesDisplay extends JPanel {
 
         @Override
         public Snake getElementAt(final int index) {
+            if (this.size == 0) {
+                return null;
+            }
             return this.snakes.getAllSnakes().get(index);
         }
 
         @Override
         public int getSize() {
-            return this.snakes.getAllSnakes().size();
+            return this.size == 0 ? 1 : this.size;
         }
 
         /**
