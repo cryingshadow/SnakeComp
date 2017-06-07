@@ -106,11 +106,11 @@ public class SettingsDisplay extends JPanel {
      * @param initButton The button for initialization of the maze.
      */
     private void addSourceDirectoryChooser() {
-        final JPanel sourceDirectoryChooser = new JPanel(new GridLayout(2, 1));
+        final JPanel sourceDirectoryChooser = new JPanel(new GridLayout(3, 1));
         sourceDirectoryChooser.setBorder(BorderFactory.createTitledBorder("Source Directory"));
         final JLabel currentFile =
             new JLabel(SettingsDisplay.labelTextFromSourceDirectory(this.settings.getSourceDirectory()));
-        final JButton chooseButton = new JButton("Browse");
+        final JButton chooseButton = new JButton("BROWSE");
         final JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle("Choose source directory");
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -149,8 +149,35 @@ public class SettingsDisplay extends JPanel {
 
             }
         );
+        final JButton loadButton = new JButton("LOAD");
+        loadButton.addActionListener(
+            new ActionListener(){
+
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    SettingsDisplay.this.competitionControl.loadSnakes();
+                }
+
+            }
+        );
+        loadButton.setEnabled(!this.competition.isRunning() && this.settings.getSourceDirectory().isPresent());
+        final ChangeListener loadButtonEnabler =
+            new ChangeListener() {
+
+                @Override
+                public void stateChanged(final ChangeEvent e) {
+                    loadButton.setEnabled(
+                        !SettingsDisplay.this.competition.isRunning()
+                        && SettingsDisplay.this.settings.getSourceDirectory().isPresent()
+                    );
+                }
+
+            };
+        this.competition.addChangeListener(loadButtonEnabler);
+        this.settings.addChangeListener(loadButtonEnabler);
         sourceDirectoryChooser.add(currentFile);
         sourceDirectoryChooser.add(chooseButton);
+        sourceDirectoryChooser.add(loadButton);
         this.addWithHorizontalFill(sourceDirectoryChooser);
     }
 
