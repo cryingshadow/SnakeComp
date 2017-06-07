@@ -137,7 +137,7 @@ public class SettingsDisplay extends JPanel {
      * Adds a panel for maze initialization (yet without snakes and food) and configuration.
      */
     private void addMazePanel() {
-        final JPanel mazePanel = new JPanel(new GridLayout(6, 1));
+        final JPanel mazePanel = new JPanel(new GridLayout(8, 1));
         mazePanel.setBorder(BorderFactory.createTitledBorder("Maze"));
         final JComboBox<Zoom> zoom =
             new JComboBox<Zoom>(new Zoom[]{Zoom.HUGE, Zoom.BIG, Zoom.NORMAL, Zoom.SMALL, Zoom.TINY});
@@ -224,6 +224,26 @@ public class SettingsDisplay extends JPanel {
             )
         );
         mazePanel.add(arena);
+        mazePanel.add(
+            SettingsDisplay.createSpinnerPanel(
+                "Food per Snake",
+                this.settings.getFoodPerSnake(),
+                1,
+                5,
+                1,
+                this.settings::setFoodPerSnake
+            )
+        );
+        mazePanel.add(
+            SettingsDisplay.createSpinnerPanel(
+                "Initial Snake Length",
+                this.settings.getInitialSnakeLength(),
+                1,
+                100,
+                1,
+                this.settings::setInitialSnakeLength
+            )
+        );
         mazePanel.add(generateButton);
         this.addWithHorizontalFill(mazePanel);
     }
