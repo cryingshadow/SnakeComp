@@ -11,6 +11,29 @@ import model.*;
 public class MazeGenerator {
 
     /**
+     * @param walls The walls.
+     * @param width The width of the maze.
+     * @param height The height of the maze.
+     * @param offset The offset for the maze positions due to the arena setting.
+     * @return A set of positions where a wall can be placed.
+     */
+    private static Set<Position> computeAvailablePositions(
+        final Set<Position> walls,
+        final int width,
+        final int height,
+        final int offset
+    ) {
+        final Set<Position> res = new LinkedHashSet<Position>();
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                res.add(new Position(x + offset, y + offset));
+            }
+        }
+        // TODO remove unavailable positions
+        return res;
+    }
+
+    /**
      * Random number generator.
      */
     private final Random random = new Random();
@@ -45,9 +68,18 @@ public class MazeGenerator {
             total = walls;
         }
         int todo = total - result.size();
+        Set<Position> available = MazeGenerator.computeAvailablePositions(result, width, height, offset);
         while (todo > 0) {
+            if (available.size() < todo) {
+                throw new IllegalStateException("Not enough valid fields left to place the walls!");
+            }
             final Collection<Position> wall = this.generateWall(width, height, offset, todo);
-            result.addAll(wall);
+            for (final Position brick : wall) {
+                if (available.contains(brick)) {
+                    result.add(brick);
+                    available = MazeGenerator.computeAvailablePositions(result, width, height, offset);
+                }
+            }
             todo = total - result.size();
         }
         return result;
@@ -66,7 +98,7 @@ public class MazeGenerator {
         final int y = this.random.nextInt(height);
         final boolean horizontal = this.random.nextBoolean();
         final int length = this.random.nextInt(todo) + 1;
-        final Collection<Position> res = new ArrayList<Position>();
+        final Collection<Position> res = new LinkedList<Position>();
         if (horizontal) {
             for (int i = 0; i < length; i++) {
                 res.add(new Position(((x + i) % width) + offset, y + offset));
