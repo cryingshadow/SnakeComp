@@ -30,6 +30,9 @@ public class DynamicCompiler {
             .stream()
             .filter(f -> f.getName().endsWith(".java"))
             .collect(Collectors.toList());
+        if (sourceFiles.isEmpty()) {
+            return Collections.emptyList();
+        }
         final List<String> names = new LinkedList<String>();
         for (final File source : sourceFiles) {
             final String fullName = source.getName();
