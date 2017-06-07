@@ -15,29 +15,6 @@ import util.*;
 public class CompetitionControl {
 
     /**
-     * @param snake A snake.
-     * @param maze The maze.
-     * @return The specified snake killed if it died on the specified maze. The snake unchanged otherwise.
-     */
-    private static Snake applyDeath(final Snake snake, final Maze maze) {
-        if (!snake.isAlive()) {
-            return snake;
-        }
-        if (snake.isStarved()) {
-            return snake.kill();
-        }
-        final Position pos = snake.getHead();
-        switch (maze.getMaze()[pos.getY()][pos.getX()].getType()) {
-            case COLLISION_ON_WALL:
-            case COLLISION_ON_FOOD:
-            case COLLISION_ON_FREE:
-                return snake.kill();
-            default:
-                return snake;
-        }
-    }
-
-    /**
      * @param width The width of the maze (including arena border if set).
      * @param height The height of the maze (including arena border if set).
      * @param snakes The snakes in the maze.
@@ -101,14 +78,14 @@ public class CompetitionControl {
     private final Competition competition;
 
     /**
-     * The current maze.
-     */
-    private final Maze currentMaze;
-
-    /**
      * The positions of food.
      */
     private final Food food;
+
+    /**
+     * The maze.
+     */
+    private final Maze maze;
 
     /**
      * The maze generator.
@@ -138,18 +115,19 @@ public class CompetitionControl {
     /**
      * Create a competition.
      * @param settings The settings.
+     * @param maze The maze.
+     * @param snakes The snakes.
      * @param competition The competition.
      */
-    public CompetitionControl(final Settings settings, final Competition competition) {
+    public CompetitionControl(final Settings settings, final Maze maze, final Snakes snakes, final Competition competition) {
         this.settings = settings;
         this.mazeGenerator = new MazeGenerator();
         this.snakeGenerator = new SnakeGenerator();
         this.walls = new Walls(Collections.emptyList());
         this.food = new Food(new FoodGenerator());
-        this.snakes = new Snakes(Collections.emptyList());
+        this.snakes = snakes;
         this.competition = competition;
-        this.currentMaze =
-            new Maze(CompetitionControl.toMaze(this.getWidth(), this.getHeight(), this.snakes, this.walls, this.food));
+        this.maze = maze;
     }
 
     /**
@@ -166,23 +144,9 @@ public class CompetitionControl {
                 this.settings.getWalls()
             )
         );
-        this.currentMaze.setMaze(
+        this.maze.setMaze(
             CompetitionControl.toMaze(this.getWidth(), this.getHeight(), this.snakes, this.walls, this.food)
         );
-    }
-
-    /**
-     * @return The current maze.
-     */
-    public Maze getCurrentMaze() {
-        return this.currentMaze;
-    }
-
-    /**
-     * @return The snakes.
-     */
-    public Snakes getSnakes() {
-        return this.snakes;
     }
 
     /**
@@ -201,7 +165,7 @@ public class CompetitionControl {
                     CompetitionControl.toMaze(
                         width,
                         height,
-                        new Snakes(Collections.emptyList()),
+                        new Snakes(),
                         this.walls,
                         this.food
                     )
@@ -211,7 +175,7 @@ public class CompetitionControl {
         );
         this.food.setAmount(this.settings.getFoodPerSnake() * snakeControls.size());
         this.food.generateFood(new Maze(CompetitionControl.toMaze(width, height, this.snakes, this.walls, this.food)));
-        this.currentMaze.setMaze(CompetitionControl.toMaze(width, height, this.snakes, this.walls, this.food));
+        this.maze.setMaze(CompetitionControl.toMaze(width, height, this.snakes, this.walls, this.food));
         this.competition.setRunning(true);
         final Thread turnThread = new Thread(new TurnControl(this.settings, this.competition, this));
         turnThread.start();
@@ -221,19 +185,19 @@ public class CompetitionControl {
      * Perform one turn of the competition.
      */
     public void turn() {
-        this.food.removeFood(this.currentMaze.getEatenFood());
+        this.food.removeFood(this.maze.getEatenFood());
         final List<Snake> snakesForNextMove =
             this
             .snakes
             .getAllSnakes()
             .stream()
-            .map(snake -> CompetitionControl.applyDeath(snake, this.currentMaze))
+            .map(snake -> this.applyDeath(snake))
             .collect(Collectors.toList());
         final Map<Snake, Position> nextPositionsOfSnakes =
             snakesForNextMove
             .stream()
             .filter(Snake::isAlive)
-            .collect(Collectors.toMap(Function.identity(), snake -> this.nextPositionOfSnake(snake, this.currentMaze)));
+            .collect(Collectors.toMap(Function.identity(), snake -> this.nextPositionOfSnake(snake)));
         this.food.setAmount(this.settings.getFoodPerSnake() * nextPositionsOfSnakes.size());
         final Map<Position, Long> occurrences =
             nextPositionsOfSnakes
@@ -257,9 +221,31 @@ public class CompetitionControl {
         final int width = this.getWidth();
         final int height = this.getHeight();
         this.food.generateFood(new Maze(CompetitionControl.toMaze(width, height, this.snakes, this.walls, this.food)));
-        this.currentMaze.setMaze(CompetitionControl.toMaze(width, height, this.snakes, this.walls, this.food));
+        this.maze.setMaze(CompetitionControl.toMaze(width, height, this.snakes, this.walls, this.food));
         this.competition.increaseTurns();
         this.competition.setRunning(!this.snakes.getAliveSnakes().isEmpty());
+    }
+
+    /**
+     * @param snake A snake.
+     * @return The specified snake killed if it died on the current maze. The snake unchanged otherwise.
+     */
+    private Snake applyDeath(final Snake snake) {
+        if (!snake.isAlive()) {
+            return snake;
+        }
+        if (snake.isStarved()) {
+            return snake.kill();
+        }
+        final Position pos = snake.getHead();
+        switch (this.maze.getMaze()[pos.getY()][pos.getX()].getType()) {
+            case COLLISION_ON_WALL:
+            case COLLISION_ON_FOOD:
+            case COLLISION_ON_FREE:
+                return snake.kill();
+            default:
+                return snake;
+        }
     }
 
     /**
@@ -278,11 +264,10 @@ public class CompetitionControl {
 
     /**
      * @param snake A snake.
-     * @param maze The maze.
      * @return The next position where the snake wants to move to.
      */
-    private Position nextPositionOfSnake(final Snake snake, final Maze maze) {
-        return this.wrapPosition(snake.getNextPosition(snake.getNextDirection(this.currentMaze)));
+    private Position nextPositionOfSnake(final Snake snake) {
+        return this.wrapPosition(snake.getNextPosition(snake.getNextDirection(this.maze)));
     }
 
     /**

@@ -22,6 +22,37 @@ public class Maze extends ChangeListenable {
     }
 
     /**
+     * Creates a maze according to the specified settings with free fields.
+     * @param settings The settings.
+     * @param height The height of the maze.
+     */
+    public Maze(final Settings settings) {
+        if (settings.isArena()) {
+            this.maze = new Field[settings.getHeight() + 2][settings.getWidth() + 2];
+            for (int i = 1; i < this.maze.length - 1; i++) {
+                for (int j = 1; j < this.maze[i].length - 1; j++) {
+                    this.maze[i][j] = new Field(FieldType.FREE, Optional.empty());
+                }
+            }
+            for (int i = 0; i < this.maze.length; i++) {
+                this.maze[i][0] = new Field(FieldType.WALL, Optional.empty());
+                this.maze[i][this.maze[i].length - 1] = new Field(FieldType.WALL, Optional.empty());
+            }
+            for (int i = 0; i < this.maze[0].length; i++) {
+                this.maze[0][i] = new Field(FieldType.WALL, Optional.empty());
+                this.maze[this.maze.length - 1][i] = new Field(FieldType.WALL, Optional.empty());
+            }
+        } else {
+            this.maze = new Field[settings.getHeight()][settings.getWidth()];
+            for (int i = 0; i < this.maze.length; i++) {
+                for (int j = 0; j < this.maze[i].length; j++) {
+                    this.maze[i][j] = new Field(FieldType.FREE, Optional.empty());
+                }
+            }
+        }
+    }
+
+    /**
      * @return The positions of food that is being eaten.
      */
     public Collection<Position> getEatenFood() {

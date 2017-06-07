@@ -17,8 +17,8 @@ public class Snakes extends ChangeListenable {
     /**
      * @param snakes The snakes;
      */
-    public Snakes(final List<Snake> snakes) {
-        this.snakes = snakes;
+    public Snakes() {
+        this.snakes = Collections.emptyList();
     }
 
     /**

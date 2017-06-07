@@ -25,10 +25,12 @@ public class Main {
         scroll.setPreferredSize(new Dimension(1300, 1020));
         frame.getContentPane().add(scroll);
         final Settings settings = new Settings();
+        final Maze maze = new Maze(settings);
         final Competition competition = new Competition();
-        final CompetitionControl control = new CompetitionControl(settings, competition);
-        final MazeDisplay mazeDisplay = new MazeDisplay(control.getCurrentMaze(), settings);
-        final SnakesDisplay snakesDisplay = new SnakesDisplay(control.getSnakes());
+        final Snakes snakes = new Snakes();
+        final CompetitionControl control = new CompetitionControl(settings, maze, snakes, competition);
+        final MazeDisplay mazeDisplay = new MazeDisplay(maze, settings);
+        final SnakesDisplay snakesDisplay = new SnakesDisplay(snakes);
         final SettingsDisplay settingsDisplay = new SettingsDisplay(settings, competition, control);
         statsAndControls.add(snakesDisplay);
         statsAndControls.add(settingsDisplay);
