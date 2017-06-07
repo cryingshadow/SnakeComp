@@ -137,7 +137,7 @@ public class SettingsDisplay extends JPanel {
      * Adds a panel for maze initialization (yet without snakes and food) and configuration.
      */
     private void addMazePanel() {
-        final JPanel mazePanel = new JPanel(new GridLayout(8, 1));
+        final JPanel mazePanel = new JPanel(new GridLayout(9, 1));
         mazePanel.setBorder(BorderFactory.createTitledBorder("Maze"));
         final JComboBox<Zoom> zoom =
             new JComboBox<Zoom>(new Zoom[]{Zoom.HUGE, Zoom.BIG, Zoom.NORMAL, Zoom.SMALL, Zoom.TINY});
@@ -229,7 +229,7 @@ public class SettingsDisplay extends JPanel {
                 "Food per Snake",
                 this.settings.getFoodPerSnake(),
                 1,
-                5,
+                10,
                 1,
                 this.settings::setFoodPerSnake
             )
@@ -242,6 +242,16 @@ public class SettingsDisplay extends JPanel {
                 100,
                 1,
                 this.settings::setInitialSnakeLength
+            )
+        );
+        mazePanel.add(
+            SettingsDisplay.createSpinnerPanel(
+                "Maximum Hunger",
+                this.settings.getMaxHunger().orElse(0),
+                0,
+                SettingsDisplay.MAXIMUM_DIMENSION * SettingsDisplay.MAXIMUM_DIMENSION,
+                1,
+                this::setMaxHunger
             )
         );
         mazePanel.add(generateButton);
@@ -419,6 +429,13 @@ public class SettingsDisplay extends JPanel {
             }
         );
         return button;
+    }
+
+    /**
+     * @param maxHunger The maximum hunger a snake can survive.
+     */
+    private void setMaxHunger(final int maxHunger) {
+        this.settings.setMaxHunger(maxHunger == 0 ? Optional.empty() : Optional.of(maxHunger));
     }
 
 }
