@@ -32,10 +32,30 @@ public class SnakesDisplay extends JPanel {
     private final SnakeListModel model;
 
     /**
-     * @param initialSnakes The snakes.
+     * @param snakes The snakes.
      */
-    public SnakesDisplay(final Snakes initialSnakes) {
-        this.model = new SnakeListModel(new ArrayList<Snake>(initialSnakes.getAllSnakes()));
+    public SnakesDisplay(final Snakes snakes) {
+        this.model = new SnakeListModel(snakes);
+        this.model.addListDataListener(
+            new ListDataListener() {
+
+                @Override
+                public void contentsChanged(final ListDataEvent e) {
+                    SnakesDisplay.this.repaint();
+                }
+
+                @Override
+                public void intervalAdded(final ListDataEvent e) {
+                    this.contentsChanged(e);
+                }
+
+                @Override
+                public void intervalRemoved(final ListDataEvent e) {
+                    this.contentsChanged(e);
+                }
+
+            }
+        );
         final ListCellRenderer<Snake> renderer = new ListCellRenderer<Snake>() {
 
             @Override
@@ -72,15 +92,9 @@ public class SnakesDisplay extends JPanel {
         final JList<Snake> list = new JList<Snake>(this.model);
         list.setSelectionModel(new NoSelectionModel());
         list.setCellRenderer(renderer);
+        list.setBorder(BorderFactory.createTitledBorder("Snake Status"));
+        list.setOpaque(false);
         this.add(list);
-    }
-
-    /**
-     * @param snakes The snakes.
-     */
-    public void setSnakes(final Snakes snakes) {
-        this.model.setSnakes(new ArrayList<Snake>(snakes.getAllSnakes()));
-        this.repaint();
     }
 
     /**
@@ -118,15 +132,41 @@ public class SnakesDisplay extends JPanel {
         private final List<ListDataListener> listeners = new LinkedList<ListDataListener>();
 
         /**
+         * The number of snakes.
+         */
+        private int size;
+
+        /**
          * The snakes.
          */
-        private List<Snake> snakes;
+        private final Snakes snakes;
 
         /**
          * @param snakes The snakes.
          */
-        public SnakeListModel(final List<Snake> snakes) {
+        public SnakeListModel(final Snakes snakes) {
             this.snakes = snakes;
+            this.size = snakes.getAllSnakes().size();
+            this.snakes.addChangeListener(
+                new ChangeListener() {
+
+                    @Override
+                    public void stateChanged(final ChangeEvent e) {
+                        final int newSize = snakes.getAllSnakes().size();
+                        final int oldSize = SnakeListModel.this.size;
+                        SnakeListModel.this.size = newSize;
+                        SnakeListModel.this.notify(
+                            new ListDataEvent(
+                                e.getSource(),
+                                ListDataEvent.CONTENTS_CHANGED,
+                                0,
+                                Math.max(oldSize, newSize) - 1
+                            )
+                        );
+                    }
+
+                }
+            );
         }
 
         @Override
@@ -136,12 +176,12 @@ public class SnakesDisplay extends JPanel {
 
         @Override
         public Snake getElementAt(final int index) {
-            return this.snakes.get(index);
+            return this.snakes.getAllSnakes().get(index);
         }
 
         @Override
         public int getSize() {
-            return this.snakes.size();
+            return this.snakes.getAllSnakes().size();
         }
 
         /**
@@ -157,14 +197,6 @@ public class SnakesDisplay extends JPanel {
         @Override
         public void removeListDataListener(final ListDataListener l) {
             this.listeners.remove(l);
-        }
-
-        /**
-         * @param snakes The snakes.
-         */
-        public void setSnakes(final List<Snake> snakes) {
-            this.snakes = snakes;
-            this.notify(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, snakes.size() - 1));
         }
 
     }

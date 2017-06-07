@@ -7,24 +7,32 @@ import java.util.stream.*;
  * Collection of the snakes in the competition.
  * @author cryingshadow
  */
-public class Snakes {
+public class Snakes extends ChangeListenable {
 
     /**
      * The snakes.
      */
-    private final Collection<Snake> snakes;
+    private List<Snake> snakes;
 
     /**
      * @param snakes The snakes;
      */
-    public Snakes(final Collection<Snake> snakes) {
+    public Snakes(final List<Snake> snakes) {
         this.snakes = snakes;
+    }
+
+    /**
+     * Removes all snakes.
+     */
+    public void clear() {
+        this.snakes = Collections.emptyList();
+        this.notifyChangeListeners();
     }
 
     /**
      * @return The snakes that are alive.
      */
-    public Collection<Snake> getAliveSnakes() {
+    public List<Snake> getAliveSnakes() {
         return this.getAliveSnakesAsStream().collect(Collectors.toList());
     }
 
@@ -39,7 +47,7 @@ public class Snakes {
     /**
      * @return The snakes.
      */
-    public Collection<Snake> getAllSnakes() {
+    public List<Snake> getAllSnakes() {
         return this.snakes;
     }
 
@@ -65,11 +73,11 @@ public class Snakes {
     }
 
     /**
-     * @param newSnakes The snakes.
+     * @param snakes The snakes.
      */
-    public void setSnakes(final Collection<Snake> newSnakes) {
-        this.snakes.clear();
-        this.snakes.addAll(newSnakes);
+    public void setSnakes(final List<Snake> snakes) {
+        this.snakes = snakes;
+        this.notifyChangeListeners();
     }
 
     /**

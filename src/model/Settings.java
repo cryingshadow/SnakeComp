@@ -1,12 +1,13 @@
 package model;
 
+import java.io.*;
 import java.util.*;
 
 /**
  * Settings for a snake competition.
  * @author cryingshadow
  */
-public class Settings {
+public class Settings extends ChangeListenable {
 
     /**
      * Is the maze to be an arena (i.e., having walls at the border of the maze)?
@@ -39,6 +40,11 @@ public class Settings {
     private Optional<Integer> maxHunger;
 
     /**
+     * The directory containing the source files for the snake controls.
+     */
+    private Optional<File> sourceDirectory;
+
+    /**
      * The speed of the competition execution.
      */
     private Speed speed;
@@ -65,6 +71,7 @@ public class Settings {
         this.height = 20;
         this.width = 20;
         this.walls = 50;
+        this.sourceDirectory = Optional.empty();
         this.setSpeed(Speed.NORMAL);
     }
 
@@ -104,6 +111,13 @@ public class Settings {
     }
 
     /**
+     * @return The directory containing the source files for the snake controls.
+     */
+    public Optional<File> getSourceDirectory() {
+        return this.sourceDirectory;
+    }
+
+    /**
      * @return The speed of the competition execution.
      */
     public Speed getSpeed() {
@@ -136,6 +150,7 @@ public class Settings {
      */
     public void setArena(final boolean arena) {
         this.arena = arena;
+        this.notifyChangeListeners();
     }
 
     /**
@@ -143,6 +158,7 @@ public class Settings {
      */
     public void setFieldSize(final int fieldSize) {
         this.fieldSize = fieldSize;
+        this.notifyChangeListeners();
     }
 
     /**
@@ -150,6 +166,7 @@ public class Settings {
      */
     public void setFoodPerSnake(final int foodPerSnake) {
         this.foodPerSnake = foodPerSnake;
+        this.notifyChangeListeners();
     }
 
     /**
@@ -157,6 +174,7 @@ public class Settings {
      */
     public void setHeight(final int height) {
         this.height = height;
+        this.notifyChangeListeners();
     }
 
     /**
@@ -164,6 +182,7 @@ public class Settings {
      */
     public void setInitialSnakeLength(final int initialSnakeLength) {
         this.initialSnakeLength = initialSnakeLength;
+        this.notifyChangeListeners();
     }
 
     /**
@@ -171,6 +190,15 @@ public class Settings {
      */
     public void setMaxHunger(final Optional<Integer> maxHunger) {
         this.maxHunger = maxHunger;
+        this.notifyChangeListeners();
+    }
+
+    /**
+     * @param sourceDirectory The directory containing the source files for the snake controls.
+     */
+    public void setSourceDirectory(final Optional<File> sourceDirectory) {
+        this.sourceDirectory = sourceDirectory;
+        this.notifyChangeListeners();
     }
 
     /**
@@ -178,6 +206,7 @@ public class Settings {
      */
     public void setSpeed(final Speed speed) {
         this.speed = speed;
+        this.notifyChangeListeners();
     }
 
     /**
@@ -185,6 +214,7 @@ public class Settings {
      */
     public void setWalls(final int walls) {
         this.walls = walls;
+        this.notifyChangeListeners();
     }
 
     /**
@@ -192,6 +222,7 @@ public class Settings {
      */
     public void setWidth(final int width) {
         this.width = width;
+        this.notifyChangeListeners();
     }
 
 }

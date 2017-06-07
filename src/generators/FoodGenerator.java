@@ -23,8 +23,8 @@ public class FoodGenerator {
     /**
      * @param amount The amount of food that should be in the maze.
      */
-    public FoodGenerator(final int amount) {
-        this.amount = amount;
+    public FoodGenerator() {
+        this.amount = 0;
     }
 
     /**

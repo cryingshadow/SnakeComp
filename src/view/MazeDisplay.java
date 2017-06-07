@@ -4,6 +4,7 @@ import java.awt.*;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.event.*;
 
 import model.*;
 
@@ -147,48 +148,44 @@ public class MazeDisplay extends JPanel {
     }
 
     /**
-     * The field size.
-     */
-    private int fieldSize;
-
-    /**
      * The maze.
      */
     private Maze maze;
 
     /**
-     * @param maze The maze.
-     * @param fieldSize The field size.
+     * The settings.
      */
-    public MazeDisplay(final Maze maze, final int fieldSize) {
+    private final Settings settings;
+
+    /**
+     * @param maze The maze.
+     * @param settings The settings.
+     */
+    public MazeDisplay(final Maze maze, final Settings settings) {
         final Field[][] array = maze.getMaze();
         if (array.length < 1 || array[0].length < 1) {
             throw new IllegalArgumentException("Maze must have at least one row and column!");
         }
         this.maze = maze;
-        this.fieldSize = fieldSize;
-    }
+        this.settings = settings;
+        final ChangeListener repainter =
+            new ChangeListener() {
 
-    /**
-     * @return the fieldSize
-     */
-    public int getFieldSize() {
-        return this.fieldSize;
+                @Override
+                public void stateChanged(final ChangeEvent e) {
+                    MazeDisplay.this.repaint();
+                }
+
+            };
+        this.maze.addChangeListener(repainter);
+        this.settings.addChangeListener(repainter);
     }
 
     @Override
     public Dimension getPreferredSize() {
-        final int size = this.getFieldSize();
+        final int size = this.settings.getFieldSize();
         final Field[][] array = this.maze.getMaze();
         return new Dimension(size * array[0].length, size * array.length);
-    }
-
-    /**
-     * @param fieldSize the fieldSize to set
-     */
-    public void setFieldSize(final int fieldSize) {
-        this.fieldSize = fieldSize;
-        this.repaint();
     }
 
     /**
@@ -201,7 +198,7 @@ public class MazeDisplay extends JPanel {
 
     @Override
     protected void paintComponent(final Graphics g) {
-        final int size = this.getFieldSize();
+        final int size = this.settings.getFieldSize();
         final Field[][] fieldArray = this.maze.getMaze();
         for (int i = 0; i < fieldArray.length; i++) {
             final Field[] fieldRow = fieldArray[i];

@@ -7,15 +7,15 @@ import java.util.function.*;
  * A maze is a rectangular collection of fields.
  * @author cryingshadow
  */
-public class Maze {
+public class Maze extends ChangeListenable {
 
     /**
      * The maze.
      */
-    private final Field[][] maze;
+    private Field[][] maze;
 
     /**
-     * @param maze The maze;
+     * @param maze The maze.
      */
     public Maze(final Field[][] maze) {
         this.maze = maze;
@@ -74,6 +74,14 @@ public class Maze {
             this.getPositions(
                 field -> field.getType().equals(FieldType.FOOD) || field.getType().equals(FieldType.COLLISION_ON_FOOD)
             ).size();
+    }
+
+    /**
+     * @param maze The maze.
+     */
+    public void setMaze(final Field[][] maze) {
+        this.maze = maze;
+        this.notifyChangeListeners();
     }
 
 }

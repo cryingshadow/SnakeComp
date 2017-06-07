@@ -39,7 +39,7 @@ public class SnakeGenerator {
      * @param settings The settings.
      * @return A collection of snakes for the specified snake controls.
      */
-    public Collection<Snake> generateSnakes(
+    public List<Snake> generateSnakes(
         final Collection<SnakeControl> snakeControls,
         final Maze maze,
         final Settings settings
@@ -48,7 +48,7 @@ public class SnakeGenerator {
         if (SnakeGenerator.AVAILABLE_COLORS.length < numOfSnakes) {
             throw new IllegalArgumentException("Not enough colors available!");
         }
-        final Collection<Snake> res = new ArrayList<Snake>();
+        final List<Snake> res = new ArrayList<Snake>();
         final List<Position> freePositions = maze.getFreePositions();
         if (freePositions.size() < numOfSnakes) {
             throw new IllegalArgumentException("Not enough free positions available!");

@@ -1,7 +1,8 @@
 package control;
 
+import javax.swing.event.*;
+
 import model.*;
-import view.*;
 
 /**
  * Control for invoking turns.
@@ -10,14 +11,19 @@ import view.*;
 public class TurnControl implements Runnable {
 
     /**
+     * The competition.
+     */
+    private final Competition competition;
+
+    /**
      * The competition control.
      */
     private final CompetitionControl control;
 
     /**
-     * The maze display.
+     * Are we on manual speed?
      */
-    private final MazeDisplay mazeDisplay;
+    private boolean manual;
 
     /**
      * The settings.
@@ -25,54 +31,55 @@ public class TurnControl implements Runnable {
     private final Settings settings;
 
     /**
-     * The snake status display.
-     */
-    private final SnakesDisplay snakesDisplay;
-
-    /**
      * @param settings The settings.
+     * @param competition The competition.
      * @param control The competition control.
-     * @param mazeDisplay The maze display.
-     * @param snakesDisplay The snake status display.
      */
     public TurnControl(
         final Settings settings,
-        final CompetitionControl control,
-        final MazeDisplay mazeDisplay,
-        final SnakesDisplay snakesDisplay
+        final Competition competition,
+        final CompetitionControl control
     ) {
         this.settings = settings;
+        this.competition = competition;
         this.control = control;
-        this.mazeDisplay = mazeDisplay;
-        this.snakesDisplay = snakesDisplay;
+        this.manual = settings.getSpeed().equals(Speed.MANUAL);
+        this.settings.addChangeListener(
+            new ChangeListener() {
+
+                @Override
+                public void stateChanged(final ChangeEvent e) {
+                    if (TurnControl.this.manual && !settings.getSpeed().equals(Speed.MANUAL)) {
+                        synchronized (TurnControl.this) {
+                            TurnControl.this.manual = false;
+                            TurnControl.this.notifyAll();
+                        }
+                    }
+
+                }
+
+            }
+        );
     }
 
     @Override
     public void run() {
         try {
-            while (!this.control.over()) {
+            while (this.competition.isRunning()) {
                 final Speed speed = this.settings.getSpeed();
                 if (speed.equals(Speed.MANUAL)) {
                     synchronized (this) {
+                        this.manual = true;
                         this.wait();
                     }
                     continue;
                 }
-                this.turn();
+                this.control.turn();
                 Thread.sleep(speed.getSleepTime());
             }
         } catch (final InterruptedException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Execute a turn.
-     */
-    public void turn() {
-        this.control.turn();
-        this.mazeDisplay.setMaze(this.control.getCurrentMaze());
-        this.snakesDisplay.setSnakes(this.control.getSnakes());
     }
 
 }

@@ -11,7 +11,7 @@ public class Walls {
     /**
      * The walls.
      */
-    private final Collection<Position> walls;
+    private Collection<Position> walls;
 
     /**
      * @param walls The walls;
@@ -33,6 +33,13 @@ public class Walls {
      */
     public boolean isWall(final Position pos) {
         return this.walls.contains(pos);
+    }
+
+    /**
+     * @param walls The walls.
+     */
+    public void setWalls(final Collection<Position> walls) {
+        this.walls = walls;
     }
 
 }

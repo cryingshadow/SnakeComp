@@ -6,6 +6,7 @@ import java.util.stream.*;
 
 import generators.*;
 import model.*;
+import util.*;
 
 /**
  * The main control of a competition.
@@ -44,7 +45,7 @@ public class CompetitionControl {
      * @param food The food in the maze.
      * @return The specified maze.
      */
-    private static Maze toMaze(
+    private static Field[][] toMaze(
         final int width,
         final int height,
         final Snakes snakes,
@@ -91,13 +92,18 @@ public class CompetitionControl {
                 maze[y][x] = curField;
             }
         }
-        return new Maze(maze);
+        return maze;
     }
+
+    /**
+     * The competition.
+     */
+    private final Competition competition;
 
     /**
      * The current maze.
      */
-    private Maze currentMaze;
+    private final Maze currentMaze;
 
     /**
      * The positions of food.
@@ -105,9 +111,19 @@ public class CompetitionControl {
     private final Food food;
 
     /**
+     * The maze generator.
+     */
+    private final MazeGenerator mazeGenerator;
+
+    /**
      * The settings.
      */
     private final Settings settings;
+
+    /**
+     * The snake generator.
+     */
+    private final SnakeGenerator snakeGenerator;
 
     /**
      * The snakes.
@@ -120,43 +136,39 @@ public class CompetitionControl {
     private final Walls walls;
 
     /**
-     * Generate an instance of a competition.
+     * Create a competition.
      * @param settings The settings.
-     * @param snakeControls The participating snake controls.
+     * @param competition The competition.
      */
-    public CompetitionControl(final Settings settings, final Collection<SnakeControl> snakeControls) {
+    public CompetitionControl(final Settings settings, final Competition competition) {
         this.settings = settings;
-        this.walls =
-            new Walls(
-                new MazeGenerator().generateMaze(
-                    this.settings.getWidth(),
-                    this.settings.getHeight(),
-                    this.settings.isArena(),
-                    this.settings.getWalls()
-                )
-            );
-        this.food = new Food(new FoodGenerator(this.settings.getFoodPerSnake() * snakeControls.size()));
-        final int width = this.getWidth();
-        final int height = this.getHeight();
-        this.snakes =
-            new Snakes(
-                new SnakeGenerator().generateSnakes(
-                    snakeControls,
-                    CompetitionControl.toMaze(
-                        width,
-                        height,
-                        new Snakes(Collections.emptyList()),
-                        this.walls,
-                        this.food
-                    ),
-                    this.settings
-                )
-            );
-        this.food.generateFood(
-            CompetitionControl.toMaze(width, height, this.snakes, this.walls, this.food)
-        );
+        this.mazeGenerator = new MazeGenerator();
+        this.snakeGenerator = new SnakeGenerator();
+        this.walls = new Walls(Collections.emptyList());
+        this.food = new Food(new FoodGenerator());
+        this.snakes = new Snakes(Collections.emptyList());
+        this.competition = competition;
         this.currentMaze =
-            CompetitionControl.toMaze(width, height, this.snakes, this.walls, this.food);
+            new Maze(CompetitionControl.toMaze(this.getWidth(), this.getHeight(), this.snakes, this.walls, this.food));
+    }
+
+    /**
+     * Generates a new maze (yet without food or snakes).
+     */
+    public void generateMaze() {
+        this.snakes.clear();
+        this.food.clear();
+        this.walls.setWalls(
+            this.mazeGenerator.generateMaze(
+                this.settings.getWidth(),
+                this.settings.getHeight(),
+                this.settings.isArena(),
+                this.settings.getWalls()
+            )
+        );
+        this.currentMaze.setMaze(
+            CompetitionControl.toMaze(this.getWidth(), this.getHeight(), this.snakes, this.walls, this.food)
+        );
     }
 
     /**
@@ -174,10 +186,35 @@ public class CompetitionControl {
     }
 
     /**
-     * @return True if the competition is over.
+     * Initializes the maze by adding food and snakes.
      */
-    public boolean over() {
-        return this.snakes.getAliveSnakes().isEmpty();
+    public void startCompetition() {
+        final Collection<SnakeControl> snakeControls =
+            DynamicCompiler.compileAndLoad(this.settings.getSourceDirectory().get());
+        final int width = this.getWidth();
+        final int height = this.getHeight();
+        this.food.clear();
+        this.snakes.setSnakes(
+            this.snakeGenerator.generateSnakes(
+                snakeControls,
+                new Maze(
+                    CompetitionControl.toMaze(
+                        width,
+                        height,
+                        new Snakes(Collections.emptyList()),
+                        this.walls,
+                        this.food
+                    )
+                ),
+                this.settings
+            )
+        );
+        this.food.setAmount(this.settings.getFoodPerSnake() * snakeControls.size());
+        this.food.generateFood(new Maze(CompetitionControl.toMaze(width, height, this.snakes, this.walls, this.food)));
+        this.currentMaze.setMaze(CompetitionControl.toMaze(width, height, this.snakes, this.walls, this.food));
+        this.competition.setRunning(true);
+        final Thread turnThread = new Thread(new TurnControl(this.settings, this.competition, this));
+        turnThread.start();
     }
 
     /**
@@ -219,8 +256,10 @@ public class CompetitionControl {
             ).collect(Collectors.toList()));
         final int width = this.getWidth();
         final int height = this.getHeight();
-        this.food.generateFood(CompetitionControl.toMaze(width, height, this.snakes, this.walls, this.food));
-        this.currentMaze = CompetitionControl.toMaze(width, height, this.snakes, this.walls, this.food);
+        this.food.generateFood(new Maze(CompetitionControl.toMaze(width, height, this.snakes, this.walls, this.food)));
+        this.currentMaze.setMaze(CompetitionControl.toMaze(width, height, this.snakes, this.walls, this.food));
+        this.competition.increaseTurns();
+        this.competition.setRunning(!this.snakes.getAliveSnakes().isEmpty());
     }
 
     /**

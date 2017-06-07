@@ -29,6 +29,13 @@ public class Food {
     }
 
     /**
+     * Removes all food.
+     */
+    public void clear() {
+        this.food.clear();
+    }
+
+    /**
      * @param maze
      */
     public void generateFood(final Maze maze) {
