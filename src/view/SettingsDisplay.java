@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+import java.util.function.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -49,6 +50,39 @@ public class SettingsDisplay extends JPanel {
         c.weightx = 1.0;
         res.add(comp, c);
         return res;
+    }
+
+    /**
+     * @param title The title.
+     * @param init The initial value.
+     * @param min The minimum value.
+     * @param max The maximum value.
+     * @param step The step width.
+     * @param setter The setter.
+     * @return A panel with a spinner having an integer number model specified by init, min, max, and step. Moreover,
+     *         the spinner has a label in front of it with the specified title and changes to the number model invoke
+     *         the specified setter.
+     */
+    private static JPanel createSpinnerPanel(
+        final String title,
+        final int init,
+        final int min,
+        final int max,
+        final int step,
+        final Consumer<Integer> setter
+    ) {
+        final JSpinner spinner = new JSpinner(new SpinnerNumberModel(init, min, max, step));
+        spinner.addChangeListener(
+            new ChangeListener() {
+
+                @Override
+                public void stateChanged(final ChangeEvent e) {
+                    setter.accept((Integer)spinner.getModel().getValue());
+                }
+
+            }
+        );
+        return SettingsDisplay.addTitle(title, spinner);
     }
 
     /**
@@ -103,7 +137,7 @@ public class SettingsDisplay extends JPanel {
      * Adds a panel for maze initialization (yet without snakes and food) and configuration.
      */
     private void addMazePanel() {
-        final JPanel mazePanel = new JPanel(new GridLayout(4, 1));
+        final JPanel mazePanel = new JPanel(new GridLayout(5, 1));
         mazePanel.setBorder(BorderFactory.createTitledBorder("Maze"));
         final JComboBox<Zoom> zoom =
             new JComboBox<Zoom>(new Zoom[]{Zoom.HUGE, Zoom.BIG, Zoom.NORMAL, Zoom.SMALL, Zoom.TINY});
@@ -118,44 +152,6 @@ public class SettingsDisplay extends JPanel {
                     } catch (final Exception e) {
                         ExceptionDisplay.showException(SettingsDisplay.this, e);
                     }
-                }
-
-            }
-        );
-        final JSpinner width =
-            new JSpinner(
-                new SpinnerNumberModel(
-                    this.settings.getWidth(),
-                    SettingsDisplay.MINIMUM_DIMENSION,
-                    SettingsDisplay.MAXIMUM_DIMENSION,
-                    1
-                )
-            );
-        width.addChangeListener(
-            new ChangeListener() {
-
-                @Override
-                public void stateChanged(final ChangeEvent e) {
-                    SettingsDisplay.this.settings.setWidth((Integer)width.getModel().getValue());
-                }
-
-            }
-        );
-        final JSpinner height =
-            new JSpinner(
-                new SpinnerNumberModel(
-                    this.settings.getHeight(),
-                    SettingsDisplay.MINIMUM_DIMENSION,
-                    SettingsDisplay.MAXIMUM_DIMENSION,
-                    1
-                )
-            );
-        height.addChangeListener(
-            new ChangeListener() {
-
-                @Override
-                public void stateChanged(final ChangeEvent e) {
-                    SettingsDisplay.this.settings.setHeight((Integer)height.getModel().getValue());
                 }
 
             }
@@ -186,8 +182,36 @@ public class SettingsDisplay extends JPanel {
             }
         );
         mazePanel.add(SettingsDisplay.addTitle("Zoom", zoom));
-        mazePanel.add(SettingsDisplay.addTitle("Width", width));
-        mazePanel.add(SettingsDisplay.addTitle("Height", height));
+        mazePanel.add(
+            SettingsDisplay.createSpinnerPanel(
+                "Width",
+                this.settings.getWidth(),
+                SettingsDisplay.MINIMUM_DIMENSION,
+                SettingsDisplay.MAXIMUM_DIMENSION,
+                1,
+                this.settings::setWidth
+            )
+        );
+        mazePanel.add(
+            SettingsDisplay.createSpinnerPanel(
+                "Height",
+                this.settings.getHeight(),
+                SettingsDisplay.MINIMUM_DIMENSION,
+                SettingsDisplay.MAXIMUM_DIMENSION,
+                1,
+                this.settings::setHeight
+            )
+        );
+        mazePanel.add(
+            SettingsDisplay.createSpinnerPanel(
+                "Walls",
+                this.settings.getWalls(),
+                0,
+                (SettingsDisplay.MAXIMUM_DIMENSION * SettingsDisplay.MAXIMUM_DIMENSION) / 2,
+                1,
+                this.settings::setWalls
+            )
+        );
         mazePanel.add(generateButton);
         this.addWithHorizontalFill(mazePanel);
     }
