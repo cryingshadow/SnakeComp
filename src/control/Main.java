@@ -3,6 +3,7 @@ package control;
 import java.awt.*;
 
 import javax.swing.*;
+import javax.swing.event.*;
 
 import model.*;
 import view.*;
@@ -46,6 +47,16 @@ public class Main {
         statsAndControls.add(competitionDisplay, c);
         content.add(mazeDisplay);
         content.add(statsAndControls);
+        settings.addChangeListener(
+            new ChangeListener() {
+
+                @Override
+                public void stateChanged(final ChangeEvent e) {
+                    frame.validate();
+                }
+
+            }
+        );
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);

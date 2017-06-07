@@ -15,11 +15,6 @@ public class Settings extends ChangeListenable {
     private boolean arena;
 
     /**
-     * The size of a single field.
-     */
-    private int fieldSize;
-
-    /**
      * How many pieces of food will be in the maze per participating snake?
      */
     private int foodPerSnake;
@@ -60,10 +55,15 @@ public class Settings extends ChangeListenable {
     private int width;
 
     /**
+     * The size of a single field.
+     */
+    private Zoom zoom;
+
+    /**
      * Default settings.
      */
     public Settings() {
-        this.fieldSize = 50;
+        this.zoom = Zoom.NORMAL;
         this.foodPerSnake = 1;
         this.arena = false;
         this.initialSnakeLength = 3;
@@ -73,13 +73,6 @@ public class Settings extends ChangeListenable {
         this.walls = 50;
         this.sourceDirectory = Optional.empty();
         this.setSpeed(Speed.NORMAL);
-    }
-
-    /**
-     * @return The size of a single field.
-     */
-    public int getFieldSize() {
-        return this.fieldSize;
     }
 
     /**
@@ -139,6 +132,13 @@ public class Settings extends ChangeListenable {
     }
 
     /**
+     * @return The size of a single field.
+     */
+    public Zoom getZoom() {
+        return this.zoom;
+    }
+
+    /**
      * @return Is the maze to be an arena (i.e., having walls at the border of the maze)?
      */
     public boolean isArena() {
@@ -150,14 +150,6 @@ public class Settings extends ChangeListenable {
      */
     public void setArena(final boolean arena) {
         this.arena = arena;
-        this.notifyChangeListeners();
-    }
-
-    /**
-     * @param fieldSize The size of a single field.
-     */
-    public void setFieldSize(final int fieldSize) {
-        this.fieldSize = fieldSize;
         this.notifyChangeListeners();
     }
 
@@ -222,6 +214,14 @@ public class Settings extends ChangeListenable {
      */
     public void setWidth(final int width) {
         this.width = width;
+        this.notifyChangeListeners();
+    }
+
+    /**
+     * @param zoom The size of a single field.
+     */
+    public void setZoom(final Zoom zoom) {
+        this.zoom = zoom;
         this.notifyChangeListeners();
     }
 

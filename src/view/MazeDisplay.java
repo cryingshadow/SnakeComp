@@ -30,9 +30,9 @@ public class MazeDisplay extends JPanel {
     private static final Color FOOD = Color.WHITE;
 
     /**
-     * The line width for a snake's head.
+     * The line width factor for a snake's head.
      */
-    private static final int HEAD_LINE_WIDTH = 5;
+    private static final int HEAD_LINE_WIDTH_FACTOR = 10;
 
     /**
      * For serialization.
@@ -43,53 +43,6 @@ public class MazeDisplay extends JPanel {
      * The color of a wall.
      */
     private static final Color WALL = Color.GRAY;
-
-    /**
-     * Paints the content of the field on top of its background (i.e., paintBackground must have been called before).
-     * @param g The graphics.
-     * @param x The offset on the x-axis.
-     * @param y The offset on the y-axis.
-     * @param field The field.
-     * @param size The field size.
-     */
-    private static void paintField(
-        final Graphics g,
-        final int x,
-        final int y,
-        final Field field,
-        final int size
-    ) {
-        MazeDisplay.paintFieldBackground(g, x, y, size, MazeDisplay.BACKGROUND);
-        final Optional<Color> snakeColor = field.getSnakeColor();
-        switch (field.getType()) {
-            case COLLISION_ON_FOOD:
-            case COLLISION_ON_FREE:
-            case COLLISION_ON_WALL:
-                MazeDisplay.paintFieldBackground(g, x, y, size, MazeDisplay.COLLISION);
-                break;
-            case FOOD:
-                g.setColor(MazeDisplay.FOOD);
-                g.fillOval(x, y, size, size);
-                break;
-            case FREE:
-                // do nothing
-                break;
-            case SNAKE_BODY:
-                MazeDisplay.paintSnakePart(g, x, y, size, snakeColor);
-                break;
-            case SNAKE_HEAD:
-                MazeDisplay.paintSnakePart(g, x, y, size, snakeColor);
-                MazeDisplay.paintHead(g, x, y, size, MazeDisplay.BACKGROUND);
-                break;
-            case SNAKE_HEAD_EATING:
-                MazeDisplay.paintSnakePart(g, x, y, size, snakeColor);
-                MazeDisplay.paintHead(g, x, y, size, MazeDisplay.FOOD);
-                break;
-            case WALL:
-                MazeDisplay.paintFieldBackground(g, x, y, size, MazeDisplay.WALL);
-                break;
-        }
-    }
 
     /**
      * Paints the background of the field.
@@ -108,20 +61,6 @@ public class MazeDisplay extends JPanel {
     ) {
         g.setColor(color);
         g.fillRect(x, y, size, size);
-    }
-
-    /**
-     * Paints the interior of a snake's head.
-     * @param g The graphics.
-     * @param x The offset on the x-axis.
-     * @param y The offset on the y-axis.
-     * @param size The field size.
-     * @param color The inner head color.
-     */
-    private static void paintHead(final Graphics g, final int x, final int y, final int size, final Color color) {
-        final int reducedSize = size - 2 * MazeDisplay.HEAD_LINE_WIDTH;
-        g.setColor(color);
-        g.fillOval(x + MazeDisplay.HEAD_LINE_WIDTH, y + MazeDisplay.HEAD_LINE_WIDTH, reducedSize, reducedSize);
     }
 
     /**
@@ -168,7 +107,7 @@ public class MazeDisplay extends JPanel {
         }
         this.maze = maze;
         this.settings = settings;
-        final ChangeListener repainter =
+        this.maze.addChangeListener(
             new ChangeListener() {
 
                 @Override
@@ -176,14 +115,23 @@ public class MazeDisplay extends JPanel {
                     MazeDisplay.this.repaint();
                 }
 
-            };
-        this.maze.addChangeListener(repainter);
-        this.settings.addChangeListener(repainter);
+            }
+        );
+        this.settings.addChangeListener(
+            new ChangeListener() {
+
+                @Override
+                public void stateChanged(final ChangeEvent e) {
+                    MazeDisplay.this.invalidate();
+                }
+
+            }
+        );
     }
 
     @Override
     public Dimension getPreferredSize() {
-        final int size = this.settings.getFieldSize();
+        final int size = this.settings.getZoom().getFieldSize();
         final Field[][] array = this.maze.getMaze();
         return new Dimension(size * array[0].length, size * array.length);
     }
@@ -198,16 +146,78 @@ public class MazeDisplay extends JPanel {
 
     @Override
     protected void paintComponent(final Graphics g) {
-        final int size = this.settings.getFieldSize();
+        final int size = this.settings.getZoom().getFieldSize();
         final Field[][] fieldArray = this.maze.getMaze();
         for (int i = 0; i < fieldArray.length; i++) {
             final Field[] fieldRow = fieldArray[i];
             final int yOffset = i * size;
             for (int j = 0; j < fieldRow.length; j++) {
                 final int xOffset = j * size;
-                MazeDisplay.paintField(g, xOffset, yOffset, fieldRow[j], size);
+                this.paintField(g, xOffset, yOffset, fieldRow[j], size);
             }
         }
+    }
+
+    /**
+     * Paints the content of the field on top of its background (i.e., paintBackground must have been called before).
+     * @param g The graphics.
+     * @param x The offset on the x-axis.
+     * @param y The offset on the y-axis.
+     * @param field The field.
+     * @param size The field size.
+     */
+    private void paintField(
+        final Graphics g,
+        final int x,
+        final int y,
+        final Field field,
+        final int size
+    ) {
+        MazeDisplay.paintFieldBackground(g, x, y, size, MazeDisplay.BACKGROUND);
+        final Optional<Color> snakeColor = field.getSnakeColor();
+        switch (field.getType()) {
+            case COLLISION_ON_FOOD:
+            case COLLISION_ON_FREE:
+            case COLLISION_ON_WALL:
+                MazeDisplay.paintFieldBackground(g, x, y, size, MazeDisplay.COLLISION);
+                break;
+            case FOOD:
+                g.setColor(MazeDisplay.FOOD);
+                g.fillOval(x, y, size, size);
+                break;
+            case FREE:
+                // do nothing
+                break;
+            case SNAKE_BODY:
+                MazeDisplay.paintSnakePart(g, x, y, size, snakeColor);
+                break;
+            case SNAKE_HEAD:
+                MazeDisplay.paintSnakePart(g, x, y, size, snakeColor);
+                this.paintHead(g, x, y, size, MazeDisplay.BACKGROUND);
+                break;
+            case SNAKE_HEAD_EATING:
+                MazeDisplay.paintSnakePart(g, x, y, size, snakeColor);
+                this.paintHead(g, x, y, size, MazeDisplay.FOOD);
+                break;
+            case WALL:
+                MazeDisplay.paintFieldBackground(g, x, y, size, MazeDisplay.WALL);
+                break;
+        }
+    }
+
+    /**
+     * Paints the interior of a snake's head.
+     * @param g The graphics.
+     * @param x The offset on the x-axis.
+     * @param y The offset on the y-axis.
+     * @param size The field size.
+     * @param color The inner head color.
+     */
+    private void paintHead(final Graphics g, final int x, final int y, final int size, final Color color) {
+        final int lineWidth = (this.settings.getZoom().getFieldSize() / MazeDisplay.HEAD_LINE_WIDTH_FACTOR);
+        final int reducedSize = size - 2 * lineWidth;
+        g.setColor(color);
+        g.fillOval(x + lineWidth, y + lineWidth, reducedSize, reducedSize);
     }
 
 }

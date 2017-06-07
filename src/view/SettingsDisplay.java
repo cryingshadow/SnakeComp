@@ -65,17 +65,35 @@ public class SettingsDisplay extends JPanel {
         this.competitionControl = competitionControl;
         this.numOfComponent = 0;
         this.setLayout(new GridBagLayout());
-        this.addMazeInitializer();
+        this.addMazePanel();
         this.addSourceDirectoryChooser();
         this.addSpeedChooser();
     }
 
     /**
-     * Adds a panel for maze initialization (yet without snakes and food).
+     * Adds a panel for maze initialization (yet without snakes and food) and configuration.
      */
-    private void addMazeInitializer() {
-        final JPanel mazeInitializer = new JPanel(new GridLayout(1, 1));
-        mazeInitializer.setBorder(BorderFactory.createTitledBorder("Maze"));
+    private void addMazePanel() {
+        final JPanel mazePanel = new JPanel(new GridLayout(2, 1));
+        mazePanel.setBorder(BorderFactory.createTitledBorder("Maze"));
+        final JComboBox<Zoom> zoom =
+            new JComboBox<Zoom>(new Zoom[]{Zoom.HUGE, Zoom.BIG, Zoom.NORMAL, Zoom.SMALL, Zoom.TINY});
+        zoom.setToolTipText("Zoom");
+        zoom.setSelectedItem(this.settings.getZoom());
+        zoom.addActionListener(
+            new ActionListener(){
+
+                @Override
+                public void actionPerformed(final ActionEvent event) {
+                    try {
+                        SettingsDisplay.this.settings.setZoom((Zoom)zoom.getSelectedItem());
+                    } catch (final Exception e) {
+                        ExceptionDisplay.showException(SettingsDisplay.this, e);
+                    }
+                }
+
+            }
+        );
         final JButton generateButton = new JButton("NEW MAZE");
         generateButton.addActionListener(
             new ActionListener(){
@@ -101,8 +119,9 @@ public class SettingsDisplay extends JPanel {
 
             }
         );
-        mazeInitializer.add(generateButton);
-        this.addWithHorizontalFill(mazeInitializer);
+        mazePanel.add(zoom);
+        mazePanel.add(generateButton);
+        this.addWithHorizontalFill(mazePanel);
     }
 
     /**
