@@ -48,8 +48,9 @@ public class CompetitionDisplay extends JPanel {
         this.competition = competition;
         this.snakeControls = snakeControls;
         this.competitionControl = competitionControl;
-        this.setLayout(new GridLayout(1, 1));
+        this.setLayout(new GridLayout(2, 1));
         this.setBorder(BorderFactory.createTitledBorder("Competition"));
+        this.addTurnDisplay();
         this.addControlButton();
     }
 
@@ -99,6 +100,25 @@ public class CompetitionDisplay extends JPanel {
             }
         );
         this.add(controlButton);
+    }
+
+    /**
+     * Adds the turn display.
+     */
+    private void addTurnDisplay() {
+        final JLabel turnDisplay = new JLabel();
+        turnDisplay.setText("Turns: " + this.competition.getTurns());
+        this.competition.addChangeListener(
+            new ChangeListener() {
+
+                @Override
+                public void stateChanged(final ChangeEvent e) {
+                    turnDisplay.setText("Turns: " + CompetitionDisplay.this.competition.getTurns());
+                }
+
+            }
+        );
+        this.add(turnDisplay);
     }
 
     /**

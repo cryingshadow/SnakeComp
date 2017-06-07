@@ -192,6 +192,7 @@ public class CompetitionControl {
         this.food.setAmount(this.settings.getFoodPerSnake() * this.snakes.getAliveSnakes().size());
         this.food.generateFood(new Maze(this.getCurrentMaze()));
         this.maze.setMaze(this.getCurrentMaze());
+        this.competition.reset();
         this.competition.setRunning(true);
         final Thread turnThread = new Thread(new TurnControl(this.settings, this.competition, this));
         turnThread.start();
