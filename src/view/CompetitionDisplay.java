@@ -31,22 +31,22 @@ public class CompetitionDisplay extends JPanel {
     private final CompetitionControl competitionControl;
 
     /**
-     * The settings.
+     * The snake controls.
      */
-    private final Settings settings;
+    private final SnakeControls snakeControls;
 
     /**
-     * @param settings The settings.
      * @param competition The competition.
+     * @param snakeControls The snake controlss.
      * @param competitionControl The competition control.
      */
     public CompetitionDisplay(
-        final Settings settings,
         final Competition competition,
+        final SnakeControls snakeControls,
         final CompetitionControl competitionControl
     ) {
-        this.settings = settings;
         this.competition = competition;
+        this.snakeControls = snakeControls;
         this.competitionControl = competitionControl;
         this.setLayout(new GridLayout(1, 1));
         this.setBorder(BorderFactory.createTitledBorder("Competition"));
@@ -57,14 +57,19 @@ public class CompetitionDisplay extends JPanel {
      * Adds the control button.
      */
     private void addControlButton() {
-        final JButton controlButton = new JButton(this.getControlButtonLabel());
+        final JButton controlButton = new JButton();
+        controlButton.setText(this.getControlButtonLabel());
         controlButton.addActionListener(
             new ActionListener(){
 
                 @Override
                 public void actionPerformed(final ActionEvent event) {
                     try {
-                        CompetitionDisplay.this.competitionControl.startCompetition();
+                        if (CompetitionDisplay.this.competition.isRunning()) {
+                            CompetitionDisplay.this.competition.setRunning(false);
+                        } else {
+                            CompetitionDisplay.this.competitionControl.startCompetition();
+                        }
                     } catch (final Exception e) {
                         ExceptionDisplay.showException(CompetitionDisplay.this, e);
                     }
@@ -72,21 +77,27 @@ public class CompetitionDisplay extends JPanel {
 
             }
         );
-        controlButton.setEnabled(!this.competition.isRunning() && this.settings.getSourceDirectory().isPresent());
-        final ChangeListener startButtonEnabler =
+        controlButton.setEnabled(!this.snakeControls.getSnakeControls().isEmpty());
+        this.snakeControls.addChangeListener(
             new ChangeListener() {
 
                 @Override
                 public void stateChanged(final ChangeEvent e) {
-                    controlButton.setEnabled(
-                        !CompetitionDisplay.this.competition.isRunning()
-                        && CompetitionDisplay.this.settings.getSourceDirectory().isPresent()
-                    );
+                    controlButton.setEnabled(!CompetitionDisplay.this.snakeControls.getSnakeControls().isEmpty());
                 }
 
-            };
-        this.competition.addChangeListener(startButtonEnabler);
-        this.settings.addChangeListener(startButtonEnabler);
+            }
+        );
+        this.competition.addChangeListener(
+            new ChangeListener() {
+
+                @Override
+                public void stateChanged(final ChangeEvent e) {
+                    controlButton.setText(CompetitionDisplay.this.getControlButtonLabel());
+                }
+
+            }
+        );
         this.add(controlButton);
     }
 
@@ -95,11 +106,7 @@ public class CompetitionDisplay extends JPanel {
      */
     private String getControlButtonLabel() {
         if (this.competition.isRunning()) {
-            if (this.settings.getSpeed().equals(Speed.MANUAL)) {
-                return "NEXT TURN";
-            } else {
-                return "ABORT";
-            }
+            return "ABORT";
         } else {
             return "START";
         }

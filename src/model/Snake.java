@@ -100,6 +100,13 @@ public class Snake {
     }
 
     /**
+     * @return This snake being alive but without positions or hunger.
+     */
+    public Snake clear() {
+        return new Snake(true, this.color, this.control, 0, this.maxHunger, new LinkedList<Position>());
+    }
+
+    /**
      * @return The snake's color.
      */
     public Color getColor() {

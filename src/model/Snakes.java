@@ -73,6 +73,14 @@ public class Snakes extends ChangeListenable {
     }
 
     /**
+     * Remove all positions of all snakes.
+     */
+    public void removePositions() {
+        this.snakes = this.snakes.stream().map(Snake::clear).collect(Collectors.toList());
+        this.notifyChangeListeners();
+    }
+
+    /**
      * @param snakes The snakes.
      */
     public void setSnakes(final List<Snake> snakes) {
