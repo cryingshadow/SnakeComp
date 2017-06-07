@@ -40,7 +40,7 @@ public class CompetitionControl {
                     final Optional<Snake> snake = snakes.getUniqueSnakeAt(curPos);
                     if (snake.isPresent()) {
                         final Snake actualSnake = snake.get();
-                        if (actualSnake.selfCollision()) {
+                        if (actualSnake.selfCollisionAt(curPos)) {
                             curField = new Field(FieldType.COLLISION_ON_FREE, Optional.empty());
                         } else if (walls.isWall(curPos)) {
                             curField = new Field(FieldType.COLLISION_ON_WALL, Optional.empty());

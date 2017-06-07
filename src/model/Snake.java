@@ -2,8 +2,6 @@ package model;
 
 import java.awt.*;
 import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
 
 import control.*;
 
@@ -217,20 +215,11 @@ public class Snake {
     }
 
     /**
-     * @return True if this snake collides with itself.
+     * @param pos A position.
+     * @return True if this snake collides with itself at the specified collision.
      */
-    public boolean selfCollision() {
-        return
-            this
-            .getPositions()
-            .stream()
-            .filter(Objects::nonNull)
-            .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-            .values()
-            .stream()
-            .filter(num -> num > 1)
-            .findFirst()
-            .isPresent();
+    public boolean selfCollisionAt(final Position pos) {
+        return this.getPositions().stream().filter(p -> pos.equals(p)).count() > 1;
     }
 
 }
