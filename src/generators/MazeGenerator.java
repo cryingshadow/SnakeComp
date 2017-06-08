@@ -11,6 +11,25 @@ import model.*;
 public class MazeGenerator {
 
     /**
+     * @param pos A position.
+     * @param walls The walls.
+     * @param width The width of the maze.
+     * @param height The height of the maze.
+     * @param offset The offset for the maze positions due to the arena setting.
+     * @return True if all free fields can still reach each other when placing a wall at the specified position.
+     */
+    private static boolean allFreeFieldsAreConnected(
+        final Position pos,
+        final Set<Position> walls,
+        final int width,
+        final int height,
+        final int offset
+    ) {
+        // TODO Auto-generated method stub
+        return true;
+    }
+
+    /**
      * @param walls The walls.
      * @param width The width of the maze.
      * @param height The height of the maze.
@@ -26,11 +45,109 @@ public class MazeGenerator {
         final Set<Position> res = new LinkedHashSet<Position>();
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                res.add(new Position(x + offset, y + offset));
+                final Position pos = new Position(x + offset, y + offset);
+                if (MazeGenerator.isAvailable(pos, walls, width, height, offset)) {
+                    res.add(pos);
+                }
             }
         }
-        // TODO remove unavailable positions
         return res;
+    }
+
+    /**
+     * @param pos A position.
+     * @param walls The walls.
+     * @param width The width of the maze.
+     * @param height The height of the maze.
+     * @param offset The offset for the maze positions due to the arena setting.
+     * @return The positions of the surrounding free positions of the specified position.
+     */
+    private static List<Position> getSurroundingFreePositions(
+        final Position pos,
+        final Set<Position> walls,
+        final int width,
+        final int height,
+        final int offset
+    ) {
+        final List<Position> res = new ArrayList<Position>(4);
+        final int x = pos.getX();
+        final int y = pos.getY();
+        if (x == 0) {
+            if (offset == 0) {
+                res.add(new Position(width - 1, y));
+            }
+        } else {
+            res.add(new Position(x - 1, y));
+        }
+        if (x == width - 1) {
+            if (offset == 0) {
+                res.add(new Position(0, y));
+            }
+        } else {
+            res.add(new Position(x + 1, y));
+        }
+        if (y == 0) {
+            if (offset == 0) {
+                res.add(new Position(x, height - 1));
+            }
+        } else {
+            res.add(new Position(x, y - 1));
+        }
+        if (y == height - 1) {
+            if (offset == 0) {
+                res.add(new Position(x, 0));
+            }
+        } else {
+            res.add(new Position(x, y + 1));
+        }
+        res.removeAll(walls);
+        return res;
+    }
+
+    /**
+     * @param pos A position.
+     * @param walls The walls.
+     * @param width The width of the maze.
+     * @param height The height of the maze.
+     * @param offset The offset for the maze positions due to the arena setting.
+     * @return True if it is possible to place a wall at the specified position.
+     */
+    private static boolean isAvailable(
+        final Position pos,
+        final Set<Position> walls,
+        final int width,
+        final int height,
+        final int offset
+    ) {
+        return
+            !walls.contains(pos)
+            && MazeGenerator.surroundingFieldsHaveThreeConnections(pos, walls, width, height, offset)
+            && MazeGenerator.allFreeFieldsAreConnected(pos, walls, width, height, offset);
+    }
+
+    /**
+     * @param pos A position.
+     * @param walls The walls.
+     * @param width The width of the maze.
+     * @param height The height of the maze.
+     * @param offset The offset for the maze positions due to the arena setting.
+     * @return True if all free surrounding fields currently have at least 3 free surrounding fields themselves.
+     */
+    private static boolean surroundingFieldsHaveThreeConnections(
+        final Position pos,
+        final Set<Position> walls,
+        final int width,
+        final int height,
+        final int offset
+    ) {
+        for (
+            final Position surrounding : MazeGenerator.getSurroundingFreePositions(pos, walls, width, height, offset)
+        ) {
+            if (MazeGenerator.getSurroundingFreePositions(surrounding, walls, width, height, offset).size() < 3) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
