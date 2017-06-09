@@ -1,8 +1,10 @@
 package generators;
 
 import java.util.*;
+import java.util.stream.*;
 
 import model.*;
+import util.*;
 
 /**
  * Generator of random mazes.
@@ -11,22 +13,54 @@ import model.*;
 public class MazeGenerator {
 
     /**
-     * @param pos A position.
      * @param walls The walls.
      * @param width The width of the maze.
      * @param height The height of the maze.
      * @param offset The offset for the maze positions due to the arena setting.
-     * @return True if all free fields can still reach each other when placing a wall at the specified position.
+     * @return True if all free fields can reach each other.
      */
     private static boolean allFreeFieldsAreConnected(
-        final Position pos,
         final Set<Position> walls,
         final int width,
         final int height,
         final int offset
     ) {
-        // TODO Auto-generated method stub
-        return true;
+        final Set<Position> freePoss = MazeGenerator.computeAllFreePositions(walls, width, height, offset);
+        final UnionFind<Position> union = new UnionFind<Position>(freePoss);
+        for (final Position freePos : freePoss) {
+            for (
+                final Position otherFreePos :
+                    MazeGenerator.getSurroundingFreePositions(freePos, walls, width, height, offset)
+            ) {
+                union.union(freePos, otherFreePos);
+            }
+        }
+        return union.getClasses().size() == 1;
+    }
+
+    /**
+     * @param walls The walls.
+     * @param width The width of the maze.
+     * @param height The height of the maze.
+     * @param offset The offset for the maze positions due to the arena setting.
+     * @return The set of all free positions.
+     */
+    private static Set<Position> computeAllFreePositions(
+        final Set<Position> walls,
+        final int width,
+        final int height,
+        final int offset
+    ) {
+        final Set<Position> res = new LinkedHashSet<Position>();
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                final Position pos = new Position(x + offset, y + offset);
+                if (!walls.contains(pos)) {
+                    res.add(pos);
+                }
+            }
+        }
+        return res;
     }
 
     /**
@@ -122,7 +156,12 @@ public class MazeGenerator {
         return
             !walls.contains(pos)
             && MazeGenerator.surroundingFieldsHaveThreeConnections(pos, walls, width, height, offset)
-            && MazeGenerator.allFreeFieldsAreConnected(pos, walls, width, height, offset);
+            && MazeGenerator.allFreeFieldsAreConnected(
+                Stream.concat(walls.stream(), Stream.of(pos)).collect(Collectors.toSet()),
+                width,
+                height,
+                offset
+            );
     }
 
     /**
