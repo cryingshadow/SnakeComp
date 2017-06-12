@@ -253,7 +253,7 @@ public class CompetitionControl {
             return snake.kill();
         }
         final Position pos = snake.getHead();
-        switch (this.maze.getMaze()[pos.getY()][pos.getX()].getType()) {
+        switch (this.maze.getField(pos.getX(), pos.getY()).getType()) {
             case COLLISION_ON_WALL:
             case COLLISION_ON_FOOD:
             case COLLISION_ON_FREE:
@@ -306,7 +306,7 @@ public class CompetitionControl {
      * @return The next position where the snake wants to move to.
      */
     private Position nextPositionOfSnake(final Snake snake) {
-        return this.wrapPosition(snake.getNextPosition(snake.getNextDirection(this.maze)));
+        return this.wrapPosition(snake.getNextPosition(snake.getNextDirection(new Maze(this.maze))));
     }
 
     /**

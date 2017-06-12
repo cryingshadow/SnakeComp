@@ -101,8 +101,7 @@ public class MazeDisplay extends JPanel {
      * @param settings The settings.
      */
     public MazeDisplay(final Maze maze, final Settings settings) {
-        final Field[][] array = maze.getMaze();
-        if (array.length < 1 || array[0].length < 1) {
+        if (maze.getWidth() < 1 || maze.getHeight() < 1) {
             throw new IllegalArgumentException("Maze must have at least one row and column!");
         }
         this.maze = maze;
@@ -132,8 +131,7 @@ public class MazeDisplay extends JPanel {
     @Override
     public Dimension getPreferredSize() {
         final int size = this.settings.getZoom().getFieldSize();
-        final Field[][] array = this.maze.getMaze();
-        return new Dimension(size * array[0].length, size * array.length);
+        return new Dimension(size * this.maze.getWidth(), size * this.maze.getHeight());
     }
 
     /**
@@ -147,13 +145,11 @@ public class MazeDisplay extends JPanel {
     @Override
     protected void paintComponent(final Graphics g) {
         final int size = this.settings.getZoom().getFieldSize();
-        final Field[][] fieldArray = this.maze.getMaze();
-        for (int i = 0; i < fieldArray.length; i++) {
-            final Field[] fieldRow = fieldArray[i];
+        for (int i = 0; i < this.maze.getHeight(); i++) {
             final int yOffset = i * size;
-            for (int j = 0; j < fieldRow.length; j++) {
+            for (int j = 0; j < this.maze.getWidth(); j++) {
                 final int xOffset = j * size;
-                this.paintField(g, xOffset, yOffset, fieldRow[j], size);
+                this.paintField(g, xOffset, yOffset, this.maze.getField(j, i), size);
             }
         }
     }

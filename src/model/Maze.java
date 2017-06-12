@@ -22,6 +22,13 @@ public class Maze extends ChangeListenable {
     }
 
     /**
+     * @param maze The maze.
+     */
+    public Maze(final Maze maze) {
+        this.maze = maze.maze;
+    }
+
+    /**
      * Creates a maze according to the specified settings with free fields.
      * @param settings The settings.
      * @param height The height of the maze.
@@ -60,6 +67,15 @@ public class Maze extends ChangeListenable {
     }
 
     /**
+     * @param x The horizontal position.
+     * @param y The vertical position.
+     * @return The field at the specified position.
+     */
+    public Field getField(final int x, final int y) {
+        return this.maze[y][x];
+    }
+
+    /**
      * @return The positions with food on them that is not being eaten.
      */
     public Collection<Position> getFood() {
@@ -74,10 +90,10 @@ public class Maze extends ChangeListenable {
     }
 
     /**
-     * @return The maze
+     * @return The height of this maze.
      */
-    public Field[][] getMaze() {
-        return this.maze;
+    public int getHeight() {
+        return this.maze.length;
     }
 
     /**
@@ -95,6 +111,13 @@ public class Maze extends ChangeListenable {
             }
         }
         return res;
+    }
+
+    /**
+     * @return The width of this maze.
+     */
+    public int getWidth() {
+        return this.maze[0].length;
     }
 
     /**
