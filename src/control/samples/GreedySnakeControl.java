@@ -12,6 +12,15 @@ import control.*;
  */
 public class GreedySnakeControl implements SnakeControl {
 
+    /**
+     * @param p1 Some position.
+     * @param p2 Some other position.
+     * @return The Manhattan distance between the specified positions.
+     */
+    public static int manhattanDistance(final Position p1, final Position p2) {
+        return Math.abs(p1.getX() - p2.getX()) + Math.abs(p1.getY() - p2.getY());
+    }
+
     @Override
     public String getName() {
         return "Greedy";
@@ -26,7 +35,9 @@ public class GreedySnakeControl implements SnakeControl {
 
                 @Override
                 public int compare(final Position o1, final Position o2) {
-                    return o1.manhattanDistance(curPos) - o2.manhattanDistance(curPos);
+                    return
+                        GreedySnakeControl.manhattanDistance(o1, curPos)
+                        - GreedySnakeControl.manhattanDistance(o2, curPos);
                 }
 
             }

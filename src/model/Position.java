@@ -53,14 +53,6 @@ public class Position {
         return 3 * this.x + 5 * this.y;
     }
 
-    /**
-     * @param pos Some position.
-     * @return The Manhattan distance between the specified position and this position.
-     */
-    public int manhattanDistance(final Position pos) {
-        return Math.abs(pos.getX() - this.getX()) + Math.abs(pos.getY() - this.getY());
-    }
-
     @Override
     public String toString() {
         return "(" + this.x + ", " + this.y + ")";
