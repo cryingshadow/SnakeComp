@@ -238,7 +238,7 @@ public class CompetitionControl {
         this.food.generateFood(new Maze(this.getCurrentMaze()));
         this.maze.setMaze(this.getCurrentMaze());
         this.competition.increaseTurns();
-        this.competition.setRunning(!this.snakes.getAliveSnakes().isEmpty());
+        this.competition.setRunning(this.competition.isRunning() && !this.snakes.getAliveSnakes().isEmpty());
     }
 
     /**
