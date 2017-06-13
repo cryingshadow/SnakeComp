@@ -199,7 +199,7 @@ public class Snake {
         if (snapshot.size() > 0) {
             return new Pair<Direction, Boolean>(snapshot.get(0), false);
         }
-        return new Pair<Direction, Boolean>(Direction.UP, true);
+        return new Pair<Direction, Boolean>(Direction.values()[(int)(System.currentTimeMillis() % 4)], true);
     }
 
     /**
