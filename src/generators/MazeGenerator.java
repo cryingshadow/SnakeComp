@@ -224,19 +224,22 @@ public class MazeGenerator {
             total = walls;
         }
         int todo = total - result.size();
-        Set<Position> available = MazeGenerator.computeAvailablePositions(result, width, height, offset);
         while (todo > 0) {
-            if (available.size() < todo) {
-                throw new IllegalStateException("Not enough valid fields left to place the walls!");
-            }
+            final int oldResultSize = result.size();
             final Collection<Position> wall = this.generateWall(width, height, offset, todo);
             for (final Position brick : wall) {
-                if (available.contains(brick)) {
+                if (MazeGenerator.isAvailable(brick, result, width, height, offset)) {
                     result.add(brick);
-                    available = MazeGenerator.computeAvailablePositions(result, width, height, offset);
                 }
             }
-            todo = total - result.size();
+            final int newResultSize = result.size();
+            if (oldResultSize == newResultSize) {
+                final Set<Position> available = MazeGenerator.computeAvailablePositions(result, width, height, offset);
+                if (available.size() < todo) {
+                    throw new IllegalStateException("Not enough valid fields left to place the walls!");
+                }
+            }
+            todo = total - newResultSize;
         }
         return result;
     }
