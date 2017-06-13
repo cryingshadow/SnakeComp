@@ -2,8 +2,10 @@ package model;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 import control.*;
+import util.*;
 
 /**
  * A snake has a head that moves one field each turn and a body of a certain length that follows the head.
@@ -30,6 +32,11 @@ public class Snake {
      * The snake's current hunger.
      */
     private final int hunger;
+
+    /**
+     * How often did the snake control take too long to compute the next direction?
+     */
+    private final int longThinker;
 
     /**
      * The maximum hunger the snake can survive.
@@ -66,6 +73,7 @@ public class Snake {
         this.alive = true;
         this.hunger = 0;
         this.maxHunger = maxHunger;
+        this.longThinker = 0;
         this.snake = new LinkedList<Position>();
         for (int i = 1; i < initialLength; i++) {
             this.snake.offer(null);
@@ -79,6 +87,7 @@ public class Snake {
      * @param control The control for this snake.
      * @param hunger The snake's current hunger.
      * @param maxHunger The maximum hunger the snake can survive.
+     * @param longThinker Did the snake control take too long last time to compute the next direction?
      * @param snake The positions of the snake. The last one is the position of the snake's head.
      */
     private Snake(
@@ -87,6 +96,7 @@ public class Snake {
         final SnakeControl control,
         final int hunger,
         final Optional<Integer> maxHunger,
+        final int longThinker,
         final LinkedList<Position> snake
     ) {
         this.alive = alive;
@@ -94,6 +104,7 @@ public class Snake {
         this.control = control;
         this.hunger = hunger;
         this.maxHunger = maxHunger;
+        this.longThinker = longThinker;
         this.snake = snake;
     }
 
@@ -101,7 +112,7 @@ public class Snake {
      * @return This snake being alive but without positions or hunger.
      */
     public Snake clear() {
-        return new Snake(true, this.color, this.control, 0, this.maxHunger, new LinkedList<Position>());
+        return new Snake(true, this.color, this.control, 0, this.maxHunger, 0, new LinkedList<Position>());
     }
 
     /**
@@ -134,11 +145,61 @@ public class Snake {
 
     /**
      * @param maze The maze.
-     * @return The direction in which to move next.
+     * @return The direction in which to move next and a flag indicating whether the computation took too long.
      */
-    public Direction getNextDirection(final Maze maze) {
+    public Pair<Direction, Boolean> getNextDirection(final Maze maze) {
         final Position curPos = this.getHead();
-        return this.control.nextDirection(maze, curPos.getX(), curPos.getY());
+        final List<Direction> container = new Vector<Direction>(1);
+        final Object monitor = this;
+        final Thread t =
+            new Thread(
+                new Runnable() {
+
+                    @Override
+                    public void run() {
+                        container.add(Snake.this.control.nextDirection(maze, curPos.getX(), curPos.getY()));
+                        synchronized (monitor) {
+                            monitor.notify();
+                        }
+                    }
+
+                }
+            );
+        t.start();
+        try {
+            synchronized (monitor) {
+                monitor.wait(200);
+            }
+        } catch (final InterruptedException e) {
+            // just continue
+        } finally {
+            if (t.isAlive()) {
+                t.interrupt();
+                final Thread killer =
+                    new Thread(
+                        new Runnable() {
+
+                            @SuppressWarnings("deprecation")
+                            @Override
+                            public void run() {
+                                try {
+                                    Thread.sleep(2000);
+                                    t.stop();
+                                } catch (final InterruptedException e) {
+                                    // do nothing
+                                }
+                            }
+
+                        }
+                    );
+                killer.start();
+            }
+        }
+        final List<Direction> snapshot = new ArrayList<Direction>(container);
+        if (snapshot.size() > 0) {
+            return new Pair<Direction, Boolean>(snapshot.get(0), false);
+        }
+        return new Pair<Direction, Boolean>(Direction.UP, true);
     }
 
     /**
@@ -172,13 +233,22 @@ public class Snake {
     /**
      * Move this snake without collision to the specified position and let it grow by one. Also remove any hunger from
      * this snake.
-     * @param nextPos The next position of the snake's head.
+     * @param nextPos The next position of the snake's head and a flag indicating whether the snake control took too
+     *                long to compute the next direction.
      * @return The moved and grown snake.
      */
-    public Snake growingMove(final Position nextPos) {
+    public Snake growingMove(final Pair<Position, Boolean> nextPos) {
         final LinkedList<Position> newSnake = new LinkedList<Position>(this.snake);
-        newSnake.offer(nextPos);
-        return new Snake(this.alive, this.color, this.control, 0, this.maxHunger, newSnake);
+        newSnake.offer(nextPos.getKey());
+        return new Snake(
+            this.alive,
+            this.color,
+            this.control,
+            0,
+            this.maxHunger,
+            nextPos.getValue() ? this.longThinker + 1 : this.longThinker,
+            newSnake
+        );
     }
 
     /**
@@ -196,22 +266,38 @@ public class Snake {
     }
 
     /**
+     * @return True if this snake took too long to compute the next direction more than twice.
+     */
+    public boolean isTooSlow() {
+        return this.longThinker > 2;
+    }
+
+    /**
      * @return This snake being dead.
      */
     public Snake kill() {
-        return new Snake(false, this.color, this.control, this.hunger, this.maxHunger, this.snake);
+        return new Snake(false, this.color, this.control, this.hunger, this.maxHunger, this.longThinker, this.snake);
     }
 
     /**
      * Move this snake without collision or growth to the specified position. Also increase this snake's hunger by one.
-     * @param nextPos The next position of the snake's head.
+     * @param nextPos The next position of the snake's head and a flag indicating whether the snake control took too
+     *                long to compute the next direction.
      * @return The moved snake.
      */
-    public Snake normalMove(final Position nextPos) {
+    public Snake normalMove(final Pair<Position, Boolean> nextPos) {
         final LinkedList<Position> newSnake = new LinkedList<Position>(this.snake);
         newSnake.poll();
-        newSnake.offer(nextPos);
-        return new Snake(this.alive, this.color, this.control, this.hunger + 1, this.maxHunger, newSnake);
+        newSnake.offer(nextPos.getKey());
+        return new Snake(
+            this.alive,
+            this.color,
+            this.control,
+            this.hunger + 1,
+            this.maxHunger,
+            nextPos.getValue() ? this.longThinker + 1 : this.longThinker,
+            newSnake
+        );
     }
 
     /**

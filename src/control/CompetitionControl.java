@@ -210,10 +210,11 @@ public class CompetitionControl {
             .stream()
             .map(snake -> this.applyDeath(snake))
             .collect(Collectors.toList());
-        final Map<Snake, Position> nextPositionsOfSnakes =
+        final Map<Snake, Pair<Position, Boolean>> nextPositionsOfSnakes =
             snakesForNextMove
             .stream()
             .filter(Snake::isAlive)
+            .parallel()
             .collect(Collectors.toMap(Function.identity(), snake -> this.nextPositionOfSnake(snake)));
         this.food.setAmount(this.settings.getFoodPerSnake() * nextPositionsOfSnakes.size());
         final Map<Position, Long> occurrences =
@@ -221,6 +222,7 @@ public class CompetitionControl {
             .entrySet()
             .stream()
             .map(Map.Entry::getValue)
+            .map(Pair::getKey)
             .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
         this.snakes.setSnakes(
             snakesForNextMove.stream().map(
@@ -228,11 +230,12 @@ public class CompetitionControl {
                     if (!snake.isAlive()) {
                         return snake;
                     }
-                    final Position nextPos = nextPositionsOfSnakes.get(snake);
+                    final Pair<Position, Boolean> nextPosWithFlag = nextPositionsOfSnakes.get(snake);
+                    final Position nextPos = nextPosWithFlag.getKey();
                     if (occurrences.get(nextPos) == 1 && this.food.isFood(nextPos)) {
-                        return snake.growingMove(nextPos);
+                        return snake.growingMove(nextPosWithFlag);
                     }
-                    return snake.normalMove(nextPos);
+                    return snake.normalMove(nextPosWithFlag);
                 }
             ).collect(Collectors.toList()));
         this.food.generateFood(new Maze(this.getCurrentMaze()));
@@ -249,7 +252,7 @@ public class CompetitionControl {
         if (!snake.isAlive()) {
             return snake;
         }
-        if (snake.isStarved()) {
+        if (snake.isStarved() || snake.isTooSlow()) {
             return snake.kill();
         }
         final Position pos = snake.getHead();
@@ -303,10 +306,12 @@ public class CompetitionControl {
 
     /**
      * @param snake A snake.
-     * @return The next position where the snake wants to move to.
+     * @return The next position where the snake wants to move to and a flag indicating whether the computation took
+     *         too long.
      */
-    private Position nextPositionOfSnake(final Snake snake) {
-        return this.wrapPosition(snake.getNextPosition(snake.getNextDirection(new Maze(this.maze))));
+    private Pair<Position, Boolean> nextPositionOfSnake(final Snake snake) {
+        final Pair<Direction, Boolean> res = snake.getNextDirection(new Maze(this.maze));
+        return new Pair<Position, Boolean>(this.wrapPosition(snake.getNextPosition(res.getKey())), res.getValue());
     }
 
     /**
