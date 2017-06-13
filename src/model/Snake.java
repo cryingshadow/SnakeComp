@@ -211,13 +211,13 @@ public class Snake {
         final Position currentHead = this.getHead();
         switch (direction) {
             case DOWN:
-                return new Position(currentHead.getX(), currentHead.getY() + 1);
+                return new Position(currentHead.getX(), currentHead.getY() - 1);
             case LEFT:
                 return new Position(currentHead.getX() - 1, currentHead.getY());
             case RIGHT:
                 return new Position(currentHead.getX() + 1, currentHead.getY());
             case UP:
-                return new Position(currentHead.getX(), currentHead.getY() - 1);
+                return new Position(currentHead.getX(), currentHead.getY() + 1);
             default:
                 throw new IllegalStateException("Someone found a new direction...");
         }

@@ -41,9 +41,9 @@ public class GreedySnakeControl implements SnakeControl {
             return Direction.LEFT;
         }
         if (foodY > yPos) {
-            return Direction.DOWN;
+            return Direction.UP;
         }
-        return Direction.UP;
+        return Direction.DOWN;
     }
 
 }

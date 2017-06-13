@@ -145,8 +145,9 @@ public class MazeDisplay extends JPanel {
     @Override
     protected void paintComponent(final Graphics g) {
         final int size = this.settings.getZoom().getFieldSize();
-        for (int i = 0; i < this.maze.getHeight(); i++) {
-            final int yOffset = i * size;
+        final int height = this.maze.getHeight();
+        for (int i = 0; i < height; i++) {
+            final int yOffset = (height - i - 1) * size;
             for (int j = 0; j < this.maze.getWidth(); j++) {
                 final int xOffset = j * size;
                 this.paintField(g, xOffset, yOffset, this.maze.getField(j, i), size);
