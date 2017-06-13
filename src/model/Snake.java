@@ -14,6 +14,34 @@ import util.*;
 public class Snake {
 
     /**
+     * If the specified thread is alive, interrupt that thread and stop it after 2 seconds.
+     * @param t A thread.
+     */
+    private static void shutdownThread(final Thread t) {
+        if (t.isAlive()) {
+            t.interrupt();
+            final Thread killer =
+                new Thread(
+                    new Runnable() {
+
+                        @SuppressWarnings("deprecation")
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(2000);
+                                t.stop();
+                            } catch (final InterruptedException e) {
+                                // do nothing
+                            }
+                        }
+
+                    }
+                );
+            killer.start();
+        }
+    }
+
+    /**
      * Is the snake still alive?
      */
     private final boolean alive;
@@ -173,27 +201,7 @@ public class Snake {
         } catch (final InterruptedException e) {
             // just continue
         } finally {
-            if (t.isAlive()) {
-                t.interrupt();
-                final Thread killer =
-                    new Thread(
-                        new Runnable() {
-
-                            @SuppressWarnings("deprecation")
-                            @Override
-                            public void run() {
-                                try {
-                                    Thread.sleep(2000);
-                                    t.stop();
-                                } catch (final InterruptedException e) {
-                                    // do nothing
-                                }
-                            }
-
-                        }
-                    );
-                killer.start();
-            }
+            Snake.shutdownThread(t);
         }
         final List<Direction> snapshot = new ArrayList<Direction>(container);
         if (snapshot.size() > 0) {
