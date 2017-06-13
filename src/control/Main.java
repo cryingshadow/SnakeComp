@@ -1,6 +1,8 @@
 package control;
 
 import java.awt.*;
+import java.io.*;
+import java.util.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -58,8 +60,22 @@ public class Main {
             }
         );
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        if (args.length > 0) {
+            Main.preload(args[0], settings, control);
+        }
         frame.pack();
         frame.setVisible(true);
+    }
+
+    /**
+     * Preloads the snake controls in the specified path.
+     * @param path The path.
+     * @param settings The settings.
+     * @param control The competition control.
+     */
+    private static void preload(final String path, final Settings settings, final CompetitionControl control) {
+        settings.setSourceDirectory(Optional.of(new File(path)));
+        control.loadSnakes();
     }
 
 }
