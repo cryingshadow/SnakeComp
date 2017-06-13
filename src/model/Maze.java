@@ -76,6 +76,14 @@ public class Maze extends ChangeListenable {
     }
 
     /**
+     * @param pos A position.
+     * @return The field at the specified position.
+     */
+    public Field getField(final Position pos) {
+        return this.getField(pos.getX(), pos.getY());
+    }
+
+    /**
      * @return The positions with food on them that is not being eaten.
      */
     public Collection<Position> getFood() {
