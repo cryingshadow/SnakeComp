@@ -25,7 +25,6 @@ public class Main {
         final JPanel statsAndControls = new JPanel();
         statsAndControls.setLayout(new GridBagLayout());
         final JScrollPane scroll = new JScrollPane(content);
-        scroll.setPreferredSize(new Dimension(1300, 1020));
         frame.getContentPane().add(scroll);
         final Settings settings = new Settings();
         final Maze maze = new Maze(settings);
@@ -55,6 +54,7 @@ public class Main {
                 @Override
                 public void stateChanged(final ChangeEvent e) {
                     frame.validate();
+                    content.scrollRectToVisible(statsAndControls.getBounds());
                 }
 
             }
