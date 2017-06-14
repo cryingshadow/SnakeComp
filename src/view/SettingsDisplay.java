@@ -137,18 +137,24 @@ public class SettingsDisplay extends JPanel {
      * Adds a panel for maze initialization (yet without snakes and food) and configuration.
      */
     private void addMazePanel() {
-        final JPanel mazePanel = new JPanel(new GridLayout(9, 1));
+        final JPanel mazePanel = new JPanel(new GridBagLayout());
+        final GridBagConstraints c = new GridBagConstraints();
+        c.gridx = 0;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 1.0;
         mazePanel.setBorder(BorderFactory.createTitledBorder("Maze"));
-        final JComboBox<Zoom> zoom =
-            new JComboBox<Zoom>(new Zoom[]{Zoom.HUGE, Zoom.BIG, Zoom.NORMAL, Zoom.SMALL, Zoom.TINY});
-        zoom.setSelectedItem(this.settings.getZoom());
-        zoom.addActionListener(
-            new ActionListener(){
+        final JSlider zoom = new JSlider(Settings.MIN_FIELD_SIZE, Settings.MAX_FIELD_SIZE, Settings.NORMAL_FIELD_SIZE);
+        zoom.setMajorTickSpacing(10);
+        zoom.setPaintTicks(true);
+        zoom.setPaintLabels(true);
+        zoom.setLabelTable(zoom.createStandardLabels(50, 50));
+        zoom.addChangeListener(
+            new ChangeListener(){
 
                 @Override
-                public void actionPerformed(final ActionEvent event) {
+                public void stateChanged(final ChangeEvent event) {
                     try {
-                        SettingsDisplay.this.settings.setZoom((Zoom)zoom.getSelectedItem());
+                        SettingsDisplay.this.settings.setZoom(zoom.getValue());
                     } catch (final Exception e) {
                         ExceptionDisplay.showException(SettingsDisplay.this, e);
                     }
@@ -192,7 +198,9 @@ public class SettingsDisplay extends JPanel {
 
             }
         );
-        mazePanel.add(SettingsDisplay.addTitle("Zoom", zoom));
+        c.gridy = 0;
+        mazePanel.add(SettingsDisplay.addTitle("Zoom", zoom), c);
+        c.gridy = 1;
         mazePanel.add(
             SettingsDisplay.createSpinnerPanel(
                 "Width",
@@ -201,8 +209,10 @@ public class SettingsDisplay extends JPanel {
                 SettingsDisplay.MAXIMUM_DIMENSION,
                 1,
                 this.settings::setWidth
-            )
+            ),
+            c
         );
+        c.gridy = 2;
         mazePanel.add(
             SettingsDisplay.createSpinnerPanel(
                 "Height",
@@ -211,8 +221,10 @@ public class SettingsDisplay extends JPanel {
                 SettingsDisplay.MAXIMUM_DIMENSION,
                 1,
                 this.settings::setHeight
-            )
+            ),
+            c
         );
+        c.gridy = 3;
         mazePanel.add(
             SettingsDisplay.createSpinnerPanel(
                 "Walls",
@@ -221,9 +233,12 @@ public class SettingsDisplay extends JPanel {
                 (SettingsDisplay.MAXIMUM_DIMENSION * SettingsDisplay.MAXIMUM_DIMENSION) / 2,
                 1,
                 this.settings::setWalls
-            )
+            ),
+            c
         );
-        mazePanel.add(arena);
+        c.gridy = 4;
+        mazePanel.add(arena, c);
+        c.gridy = 5;
         mazePanel.add(
             SettingsDisplay.createSpinnerPanel(
                 "Food per Snake",
@@ -232,8 +247,10 @@ public class SettingsDisplay extends JPanel {
                 10,
                 1,
                 this.settings::setFoodPerSnake
-            )
+            ),
+            c
         );
+        c.gridy = 6;
         mazePanel.add(
             SettingsDisplay.createSpinnerPanel(
                 "Initial Snake Length",
@@ -242,8 +259,10 @@ public class SettingsDisplay extends JPanel {
                 100,
                 1,
                 this.settings::setInitialSnakeLength
-            )
+            ),
+            c
         );
+        c.gridy = 7;
         mazePanel.add(
             SettingsDisplay.createSpinnerPanel(
                 "Maximum Hunger",
@@ -252,9 +271,11 @@ public class SettingsDisplay extends JPanel {
                 SettingsDisplay.MAXIMUM_DIMENSION * SettingsDisplay.MAXIMUM_DIMENSION,
                 1,
                 this::setMaxHunger
-            )
+            ),
+            c
         );
-        mazePanel.add(generateButton);
+        c.gridy = 8;
+        mazePanel.add(generateButton, c);
         this.addWithHorizontalFill(mazePanel);
     }
 

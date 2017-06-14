@@ -21,7 +21,7 @@ public class Main {
      */
     public static void main(final String[] args) {
         final JFrame frame = new JFrame("SnakeTest");
-        final JPanel content = new JPanel(new FlowLayout());
+        final JPanel content = new JPanel(new GridBagLayout());
         final JPanel statsAndControls = new JPanel();
         statsAndControls.setLayout(new GridBagLayout());
         final JScrollPane scroll = new JScrollPane(content);
@@ -46,8 +46,14 @@ public class Main {
         statsAndControls.add(settingsDisplay, c);
         c.gridy = 2;
         statsAndControls.add(competitionDisplay, c);
-        content.add(mazeDisplay);
-        content.add(statsAndControls);
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.NORTHEAST;
+        content.add(mazeDisplay, c);
+        c.gridx = 1;
+        c.anchor = GridBagConstraints.NORTH;
+        c.fill = GridBagConstraints.NONE;
+        c.weightx = 0.0;
+        content.add(statsAndControls, c);
         settings.addChangeListener(
             new ChangeListener() {
 

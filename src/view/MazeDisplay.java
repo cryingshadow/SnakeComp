@@ -130,7 +130,7 @@ public class MazeDisplay extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        final int size = this.settings.getZoom().getFieldSize();
+        final int size = this.settings.getZoom();
         return new Dimension(size * this.maze.getWidth(), size * this.maze.getHeight());
     }
 
@@ -144,7 +144,7 @@ public class MazeDisplay extends JPanel {
 
     @Override
     protected void paintComponent(final Graphics g) {
-        final int size = this.settings.getZoom().getFieldSize();
+        final int size = this.settings.getZoom();
         final int height = this.maze.getHeight();
         for (int i = 0; i < height; i++) {
             final int yOffset = (height - i - 1) * size;
@@ -211,7 +211,7 @@ public class MazeDisplay extends JPanel {
      * @param color The inner head color.
      */
     private void paintHead(final Graphics g, final int x, final int y, final int size, final Color color) {
-        final int lineWidth = (this.settings.getZoom().getFieldSize() / MazeDisplay.HEAD_LINE_WIDTH_FACTOR);
+        final int lineWidth = (this.settings.getZoom() / MazeDisplay.HEAD_LINE_WIDTH_FACTOR);
         final int reducedSize = size - 2 * lineWidth;
         g.setColor(color);
         g.fillOval(x + lineWidth, y + lineWidth, reducedSize, reducedSize);

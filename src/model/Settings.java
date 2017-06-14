@@ -10,6 +10,21 @@ import java.util.*;
 public class Settings extends ChangeListenable {
 
     /**
+     * The maximum field size in pixels.
+     */
+    public static final int MAX_FIELD_SIZE = 250;
+
+    /**
+     * The minimum field size in pixels.
+     */
+    public static final int MIN_FIELD_SIZE = 10;
+
+    /**
+     * The normal field size in pixels.
+     */
+    public static final int NORMAL_FIELD_SIZE = 50;
+
+    /**
      * Is the maze to be an arena (i.e., having walls at the border of the maze)?
      */
     private boolean arena;
@@ -57,13 +72,13 @@ public class Settings extends ChangeListenable {
     /**
      * The size of a single field.
      */
-    private Zoom zoom;
+    private int zoom;
 
     /**
      * Default settings.
      */
     public Settings() {
-        this.zoom = Zoom.NORMAL;
+        this.zoom = Settings.NORMAL_FIELD_SIZE;
         this.foodPerSnake = 1;
         this.arena = false;
         this.initialSnakeLength = 3;
@@ -134,7 +149,7 @@ public class Settings extends ChangeListenable {
     /**
      * @return The size of a single field.
      */
-    public Zoom getZoom() {
+    public int getZoom() {
         return this.zoom;
     }
 
@@ -220,7 +235,7 @@ public class Settings extends ChangeListenable {
     /**
      * @param zoom The size of a single field.
      */
-    public void setZoom(final Zoom zoom) {
+    public void setZoom(final int zoom) {
         this.zoom = zoom;
         this.notifyChangeListeners();
     }
