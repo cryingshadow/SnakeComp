@@ -15,9 +15,19 @@ public class Settings extends ChangeListenable {
     public static final int MAX_FIELD_SIZE = 250;
 
     /**
+     * The maximum number of fields in a dimension.
+     */
+    public static final int MAXIMUM_DIMENSION = 1000;
+
+    /**
      * The minimum field size in pixels.
      */
     public static final int MIN_FIELD_SIZE = 10;
+
+    /**
+     * The minimum number of fields in a dimension.
+     */
+    public static final int MINIMUM_DIMENSION = 5;
 
     /**
      * The normal field size in pixels.
@@ -87,7 +97,7 @@ public class Settings extends ChangeListenable {
         this.width = 20;
         this.walls = 50;
         this.sourceDirectory = Optional.empty();
-        this.setSpeed(Speed.NORMAL);
+        this.speed = Speed.NORMAL;
     }
 
     /**

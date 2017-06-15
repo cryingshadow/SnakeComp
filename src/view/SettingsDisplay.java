@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
-import java.util.function.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -19,71 +18,9 @@ import model.*;
 public class SettingsDisplay extends JPanel {
 
     /**
-     * The maximum number of fields in a dimension.
-     */
-    private static final int MAXIMUM_DIMENSION = 1000;
-
-    /**
-     * The minimum number of fields in a dimension.
-     */
-    private static final int MINIMUM_DIMENSION = 5;
-
-    /**
      * For serialization.
      */
     private static final long serialVersionUID = -6697575997683663504L;
-
-    /**
-     * @param title The title.
-     * @param comp The component.
-     * @return The specified component with a title label in front of it.
-     */
-    private static JPanel addTitle(final String title, final Component comp) {
-        final JPanel res = new JPanel(new GridBagLayout());
-        final GridBagConstraints c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 0;
-        c.weightx = 0.0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        res.add(new JLabel(title + ": "), c);
-        c.gridx = 1;
-        c.weightx = 1.0;
-        res.add(comp, c);
-        return res;
-    }
-
-    /**
-     * @param title The title.
-     * @param init The initial value.
-     * @param min The minimum value.
-     * @param max The maximum value.
-     * @param step The step width.
-     * @param setter The setter.
-     * @return A panel with a spinner having an integer number model specified by init, min, max, and step. Moreover,
-     *         the spinner has a label in front of it with the specified title and changes to the number model invoke
-     *         the specified setter.
-     */
-    private static JPanel createSpinnerPanel(
-        final String title,
-        final int init,
-        final int min,
-        final int max,
-        final int step,
-        final Consumer<Integer> setter
-    ) {
-        final JSpinner spinner = new JSpinner(new SpinnerNumberModel(init, min, max, step));
-        spinner.addChangeListener(
-            new ChangeListener() {
-
-                @Override
-                public void stateChanged(final ChangeEvent e) {
-                    setter.accept((Integer)spinner.getModel().getValue());
-                }
-
-            }
-        );
-        return SettingsDisplay.addTitle(title, spinner);
-    }
 
     /**
      * @param sourceDirectory The source directory.
@@ -128,155 +65,9 @@ public class SettingsDisplay extends JPanel {
         this.competitionControl = competitionControl;
         this.numOfComponent = 0;
         this.setLayout(new GridBagLayout());
-        this.addMazePanel();
+        this.addWithHorizontalFill(new MazeSettingsDisplay(settings, competition, competitionControl));
         this.addSourceDirectoryChooser();
         this.addSpeedChooser();
-    }
-
-    /**
-     * Adds a panel for maze initialization (yet without snakes and food) and configuration.
-     */
-    private void addMazePanel() {
-        final JPanel mazePanel = new JPanel(new GridBagLayout());
-        final GridBagConstraints c = new GridBagConstraints();
-        c.gridx = 0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 1.0;
-        mazePanel.setBorder(BorderFactory.createTitledBorder("Maze"));
-        final JSlider zoom = new JSlider(Settings.MIN_FIELD_SIZE, Settings.MAX_FIELD_SIZE, Settings.NORMAL_FIELD_SIZE);
-        zoom.setMajorTickSpacing(10);
-        zoom.setPaintTicks(true);
-        zoom.setPaintLabels(true);
-        zoom.setLabelTable(zoom.createStandardLabels(50, 50));
-        zoom.addChangeListener(
-            new ChangeListener(){
-
-                @Override
-                public void stateChanged(final ChangeEvent event) {
-                    try {
-                        SettingsDisplay.this.settings.setZoom(zoom.getValue());
-                    } catch (final Exception e) {
-                        ExceptionDisplay.showException(SettingsDisplay.this, e);
-                    }
-                }
-
-            }
-        );
-        final JCheckBox arena = new JCheckBox("Arena", this.settings.isArena());
-        arena.addActionListener(
-            new ActionListener() {
-
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    SettingsDisplay.this.settings.setArena(arena.isSelected());
-                }
-
-            }
-        );
-        final JButton generateButton = new JButton("NEW MAZE");
-        generateButton.addActionListener(
-            new ActionListener(){
-
-                @Override
-                public void actionPerformed(final ActionEvent event) {
-                    try {
-                        SettingsDisplay.this.competitionControl.generateMaze();
-                    } catch (final Exception e) {
-                        ExceptionDisplay.showException(SettingsDisplay.this, e);
-                    }
-                }
-
-            }
-        );
-        this.competition.addChangeListener(
-            new ChangeListener() {
-
-                @Override
-                public void stateChanged(final ChangeEvent e) {
-                    generateButton.setEnabled(!SettingsDisplay.this.competition.isRunning());
-                }
-
-            }
-        );
-        c.gridy = 0;
-        mazePanel.add(SettingsDisplay.addTitle("Zoom", zoom), c);
-        c.gridy = 1;
-        mazePanel.add(
-            SettingsDisplay.createSpinnerPanel(
-                "Width",
-                this.settings.getWidth(),
-                SettingsDisplay.MINIMUM_DIMENSION,
-                SettingsDisplay.MAXIMUM_DIMENSION,
-                1,
-                this.settings::setWidth
-            ),
-            c
-        );
-        c.gridy = 2;
-        mazePanel.add(
-            SettingsDisplay.createSpinnerPanel(
-                "Height",
-                this.settings.getHeight(),
-                SettingsDisplay.MINIMUM_DIMENSION,
-                SettingsDisplay.MAXIMUM_DIMENSION,
-                1,
-                this.settings::setHeight
-            ),
-            c
-        );
-        c.gridy = 3;
-        mazePanel.add(
-            SettingsDisplay.createSpinnerPanel(
-                "Walls",
-                this.settings.getWalls(),
-                0,
-                (SettingsDisplay.MAXIMUM_DIMENSION * SettingsDisplay.MAXIMUM_DIMENSION) / 2,
-                1,
-                this.settings::setWalls
-            ),
-            c
-        );
-        c.gridy = 4;
-        mazePanel.add(arena, c);
-        c.gridy = 5;
-        mazePanel.add(
-            SettingsDisplay.createSpinnerPanel(
-                "Food per Snake",
-                this.settings.getFoodPerSnake(),
-                1,
-                10,
-                1,
-                this.settings::setFoodPerSnake
-            ),
-            c
-        );
-        c.gridy = 6;
-        mazePanel.add(
-            SettingsDisplay.createSpinnerPanel(
-                "Initial Snake Length",
-                this.settings.getInitialSnakeLength(),
-                1,
-                100,
-                1,
-                this.settings::setInitialSnakeLength
-            ),
-            c
-        );
-        c.gridy = 7;
-        mazePanel.add(
-            SettingsDisplay.createSpinnerPanel(
-                "Maximum Hunger",
-                this.settings.getMaxHunger().orElse(0),
-                0,
-                SettingsDisplay.MAXIMUM_DIMENSION * SettingsDisplay.MAXIMUM_DIMENSION,
-                1,
-                this::setMaxHunger
-            ),
-            c
-        );
-        c.gridy = 8;
-        mazePanel.add(generateButton, c);
-        this.addWithHorizontalFill(mazePanel);
     }
 
     /**
@@ -450,13 +241,6 @@ public class SettingsDisplay extends JPanel {
             }
         );
         return button;
-    }
-
-    /**
-     * @param maxHunger The maximum hunger a snake can survive.
-     */
-    private void setMaxHunger(final int maxHunger) {
-        this.settings.setMaxHunger(maxHunger == 0 ? Optional.empty() : Optional.of(maxHunger));
     }
 
 }
