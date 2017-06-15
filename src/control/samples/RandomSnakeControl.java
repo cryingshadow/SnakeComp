@@ -3,6 +3,7 @@ package control.samples;
 import model.*;
 
 import java.util.*;
+import java.util.stream.*;
 
 import control.*;
 
@@ -24,16 +25,16 @@ public class RandomSnakeControl implements SnakeControl {
 
     @Override
     public Direction nextDirection(final Maze maze, final int xPos, final int yPos) {
-        switch (this.random.nextInt(4)) {
-            case 0:
-                return Direction.DOWN;
-            case 1:
-                return Direction.LEFT;
-            case 2:
-                return Direction.RIGHT;
-            default:
-                return Direction.UP;
+        final List<Position> surrounding =
+            maze
+            .getSurroundingPositions(xPos, yPos)
+            .stream()
+            .filter(pos -> !maze.getField(pos).getType().isObstacle())
+            .collect(Collectors.toList());
+        if (surrounding.isEmpty()) {
+            return Direction.UP;
         }
+        return new Position(xPos, yPos).computeDirection(surrounding.get(this.random.nextInt(surrounding.size())));
     }
 
 }
