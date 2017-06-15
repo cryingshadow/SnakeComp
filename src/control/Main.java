@@ -33,7 +33,7 @@ public class Main {
         final SnakeControls snakeControls = new SnakeControls();
         final CompetitionControl control = new CompetitionControl(settings, maze, snakes, snakeControls, competition);
         final MazeDisplay mazeDisplay = new MazeDisplay(maze, settings);
-        final SnakesDisplay snakesDisplay = new SnakesDisplay(snakes);
+        final SnakesDisplay snakesDisplay = new SnakesDisplay(settings, snakes);
         final SettingsDisplay settingsDisplay = new SettingsDisplay(settings, competition, control);
         final CompetitionDisplay competitionDisplay =
             new CompetitionDisplay(settings, competition, snakeControls, control);

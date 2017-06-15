@@ -54,10 +54,27 @@ public class SnakesDisplay extends JPanel {
     private final SnakeListModel model;
 
     /**
+     * The settings.
+     */
+    private final Settings settings;
+
+    /**
+     * @param settings The settings.
      * @param snakes The snakes.
      */
-    public SnakesDisplay(final Snakes snakes) {
+    public SnakesDisplay(final Settings settings, final Snakes snakes) {
+        this.settings = settings;
         this.model = new SnakeListModel(snakes);
+        this.settings.addChangeListener(
+            new ChangeListener() {
+
+                @Override
+                public void stateChanged(final ChangeEvent e) {
+                    SnakesDisplay.this.repaint();
+                }
+
+            }
+        );
         this.model.addListDataListener(
             new ListDataListener() {
 
@@ -97,6 +114,10 @@ public class SnakesDisplay extends JPanel {
                 text.append(value.getName());
                 text.append(" (");
                 text.append(value.getLength());
+                if (SnakesDisplay.this.settings.isRespawning()) {
+                    text.append("/");
+                    text.append(value.getMaxLength());
+                }
                 text.append("): ");
                 text.append(value.isAlive() ? "ALIVE" : "DEAD");
                 final JLabel res = new JLabel(text.toString());

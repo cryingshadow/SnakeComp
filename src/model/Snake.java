@@ -86,6 +86,11 @@ public class Snake {
     private final Optional<Integer> maxHunger;
 
     /**
+     * The maximum length this snake ever reached so far.
+     */
+    private final int maxLength;
+
+    /**
      * The positions of the snake. The last one is the position of the snake's head.
      */
     private final LinkedList<Position> snake;
@@ -117,6 +122,7 @@ public class Snake {
         this.maxHunger = maxHunger;
         this.longThinker = 0;
         this.snake = Snake.createInitialPositions(initialPosition, initialLength);
+        this.maxLength = initialLength;
     }
 
     /**
@@ -126,6 +132,7 @@ public class Snake {
      * @param hunger The snake's current hunger.
      * @param maxHunger The maximum hunger the snake can survive.
      * @param longThinker Did the snake control take too long last time to compute the next direction?
+     * @param maxLength The maximum length this snake ever reached so far.
      * @param snake The positions of the snake. The last one is the position of the snake's head.
      */
     private Snake(
@@ -135,6 +142,7 @@ public class Snake {
         final int hunger,
         final Optional<Integer> maxHunger,
         final int longThinker,
+        final int maxLength,
         final LinkedList<Position> snake
     ) {
         this.alive = alive;
@@ -143,6 +151,7 @@ public class Snake {
         this.hunger = hunger;
         this.maxHunger = maxHunger;
         this.longThinker = longThinker;
+        this.maxLength = maxLength;
         this.snake = snake;
     }
 
@@ -150,7 +159,7 @@ public class Snake {
      * @return This snake being alive but without positions or hunger.
      */
     public Snake clear() {
-        return new Snake(true, this.color, this.control, 0, this.maxHunger, 0, new LinkedList<Position>());
+        return new Snake(true, this.color, this.control, 0, this.maxHunger, 0, 0, new LinkedList<Position>());
     }
 
     /**
@@ -172,6 +181,13 @@ public class Snake {
      */
     public int getLength() {
         return this.snake.size();
+    }
+
+    /**
+     * @return The maximum length this snake ever reached so far.
+     */
+    public int getMaxLength() {
+        return this.maxLength;
     }
 
     /**
@@ -265,6 +281,7 @@ public class Snake {
             0,
             this.maxHunger,
             nextPos.getValue() ? this.longThinker + 1 : this.longThinker,
+            Math.max(this.maxLength, newSnake.size()),
             newSnake
         );
     }
@@ -294,7 +311,16 @@ public class Snake {
      * @return This snake being dead.
      */
     public Snake kill() {
-        return new Snake(false, this.color, this.control, this.hunger, this.maxHunger, this.longThinker, this.snake);
+        return new Snake(
+            false,
+            this.color,
+            this.control,
+            this.hunger,
+            this.maxHunger,
+            this.longThinker,
+            this.maxLength,
+            this.snake
+        );
     }
 
     /**
@@ -314,6 +340,7 @@ public class Snake {
             this.hunger + 1,
             this.maxHunger,
             nextPos.getValue() ? this.longThinker + 1 : this.longThinker,
+            this.maxLength,
             newSnake
         );
     }
@@ -331,6 +358,7 @@ public class Snake {
             0,
             this.maxHunger,
             0,
+            Math.max(this.maxLength, initialLength),
             Snake.createInitialPositions(pos, initialLength)
         );
     }
