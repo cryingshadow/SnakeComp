@@ -25,6 +25,24 @@ public class Position {
         this.y = y;
     }
 
+    /**
+     * @param target A surrounding target position.
+     * @return The direction in which the target position is from this position.
+     */
+    public Direction computeDirection(final Position target) {
+        final int xDist = target.getX() - this.getX();
+        final int yDist = target.getY() - this.getY();
+        if (xDist == 0) {
+            if (yDist == 1 || yDist < -1) {
+                return Direction.UP;
+            }
+            return Direction.DOWN;
+        } else if (xDist == 1 || xDist < -1) {
+            return Direction.RIGHT;
+        }
+        return Direction.LEFT;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (o instanceof Position) {

@@ -122,6 +122,30 @@ public class Maze extends ChangeListenable {
     }
 
     /**
+     * @param x The horizontal position.
+     * @param y The vertical position.
+     * @return The surrounding positions of the specified one.
+     */
+    public List<Position> getSurroundingPositions(final int x, final int y) {
+        final int width = this.getWidth();
+        final int height = this.getHeight();
+        final List<Position> res = new ArrayList<Position>(4);
+        res.add(new Position(x == 0 ? width - 1 : x - 1, y));
+        res.add(new Position(x == width - 1 ? 0 : x + 1, y));
+        res.add(new Position(x, y == 0 ? height - 1 : y - 1));
+        res.add(new Position(x, y == height - 1 ? 0 : y + 1));
+        return res;
+    }
+
+    /**
+     * @param pos A position.
+     * @return The surrounding positions of the specified one.
+     */
+    public List<Position> getSurroundingPositions(final Position pos) {
+        return this.getSurroundingPositions(pos.getX(), pos.getY());
+    }
+
+    /**
      * @return The width of this maze.
      */
     public int getWidth() {
