@@ -60,6 +60,11 @@ public class Settings extends ChangeListenable {
     private Optional<Integer> maxHunger;
 
     /**
+     * Do snakes respawn after they die?
+     */
+    private boolean respawning;
+
+    /**
      * The directory containing the source files for the snake controls.
      */
     private Optional<File> sourceDirectory;
@@ -98,6 +103,7 @@ public class Settings extends ChangeListenable {
         this.walls = 50;
         this.sourceDirectory = Optional.empty();
         this.speed = Speed.NORMAL;
+        this.respawning = false;
     }
 
     /**
@@ -171,6 +177,13 @@ public class Settings extends ChangeListenable {
     }
 
     /**
+     * @return Do snakes respawn after they die?
+     */
+    public boolean isRespawning() {
+        return this.respawning;
+    }
+
+    /**
      * @param arena Is the maze to be an arena (i.e., having walls at the border of the maze)?
      */
     public void setArena(final boolean arena) {
@@ -207,6 +220,14 @@ public class Settings extends ChangeListenable {
      */
     public void setMaxHunger(final Optional<Integer> maxHunger) {
         this.maxHunger = maxHunger;
+        this.notifyChangeListeners();
+    }
+
+    /**
+     * @param respawning Do snakes respawn after they die?
+     */
+    public void setRespawning(final boolean respawning) {
+        this.respawning = respawning;
         this.notifyChangeListeners();
     }
 

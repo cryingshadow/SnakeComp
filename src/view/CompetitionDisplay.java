@@ -31,25 +31,34 @@ public class CompetitionDisplay extends JPanel {
     private final CompetitionControl competitionControl;
 
     /**
+     * The settings.
+     */
+    private final Settings settings;
+
+    /**
      * The snake controls.
      */
     private final SnakeControls snakeControls;
 
     /**
+     * @param settings The settings.
      * @param competition The competition.
      * @param snakeControls The snake controlss.
      * @param competitionControl The competition control.
      */
     public CompetitionDisplay(
+        final Settings settings,
         final Competition competition,
         final SnakeControls snakeControls,
         final CompetitionControl competitionControl
     ) {
+        this.settings = settings;
         this.competition = competition;
         this.snakeControls = snakeControls;
         this.competitionControl = competitionControl;
-        this.setLayout(new GridLayout(2, 1));
+        this.setLayout(new GridLayout(3, 1));
         this.setBorder(BorderFactory.createTitledBorder("Competition"));
+        this.addRespawningCheckbox();
         this.addTurnDisplay();
         this.addControlButton();
     }
@@ -100,6 +109,24 @@ public class CompetitionDisplay extends JPanel {
             }
         );
         this.add(controlButton);
+    }
+
+    /**
+     * Adds a checkbox for setting whether dead snakes respawn.
+     */
+    private void addRespawningCheckbox() {
+        final JCheckBox respawn = new JCheckBox("Respawning", this.settings.isRespawning());
+        respawn.addActionListener(
+            new ActionListener() {
+
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    CompetitionDisplay.this.settings.setRespawning(respawn.isSelected());
+                }
+
+            }
+        );
+        this.add(respawn);
     }
 
     /**

@@ -14,6 +14,20 @@ import util.*;
 public class Snake {
 
     /**
+     * @param pos The initial position of the head.
+     * @param initialLength The initial length.
+     * @return The positions of the snake.
+     */
+    private static LinkedList<Position> createInitialPositions(final Position pos, final int initialLength) {
+        final LinkedList<Position> poss = new LinkedList<Position>();
+        for (int i = 1; i < initialLength; i++) {
+            poss.offer(null);
+        }
+        poss.offer(pos);
+        return poss;
+    }
+
+    /**
      * If the specified thread is alive, interrupt that thread and stop it after 2 seconds.
      * @param t A thread.
      */
@@ -102,11 +116,7 @@ public class Snake {
         this.hunger = 0;
         this.maxHunger = maxHunger;
         this.longThinker = 0;
-        this.snake = new LinkedList<Position>();
-        for (int i = 1; i < initialLength; i++) {
-            this.snake.offer(null);
-        }
-        this.snake.offer(initialPosition);
+        this.snake = Snake.createInitialPositions(initialPosition, initialLength);
     }
 
     /**
@@ -305,6 +315,23 @@ public class Snake {
             this.maxHunger,
             nextPos.getValue() ? this.longThinker + 1 : this.longThinker,
             newSnake
+        );
+    }
+
+    /**
+     * @param pos The new start position.
+     * @param initialLength The initial length.
+     * @return This snake brought back to live with the specified start position and length.
+     */
+    public Snake respawn(final Position pos, final int initialLength) {
+        return new Snake(
+            true,
+            this.color,
+            this.control,
+            0,
+            this.maxHunger,
+            0,
+            Snake.createInitialPositions(pos, initialLength)
         );
     }
 

@@ -69,4 +69,13 @@ public class SnakeGenerator {
         return res;
     }
 
+    /**
+     * @param maze The maze.
+     * @return A random free position for respawning.
+     */
+    public Position getRespawnPosition(final Maze maze) {
+        final List<Position> freePositions = maze.getFreePositions();
+        return freePositions.get(this.random.nextInt(freePositions.size()));
+    }
+
 }

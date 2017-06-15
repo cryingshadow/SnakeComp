@@ -208,6 +208,7 @@ public class CompetitionControl {
             .snakes
             .getAllSnakes()
             .stream()
+            .map(snake -> this.respawn(snake))
             .map(snake -> this.applyDeath(snake))
             .collect(Collectors.toList());
         final Map<Snake, Pair<Position, Boolean>> nextPositionsOfSnakes =
@@ -320,6 +321,17 @@ public class CompetitionControl {
     private void removeSnakePositions() {
         this.snakes.removePositions();
         this.maze.setMaze(this.getCurrentMaze());
+    }
+
+    /**
+     * @param snake A snake.
+     * @return The specified snake if respawning is not active or the snake is alive. Otherwise the respawned snake.
+     */
+    private Snake respawn(final Snake snake) {
+        if (!this.settings.isRespawning() || snake.isAlive()) {
+            return snake;
+        }
+        return snake.respawn(this.snakeGenerator.getRespawnPosition(this.maze), this.settings.getInitialSnakeLength());
     }
 
     /**
