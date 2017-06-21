@@ -6,7 +6,7 @@ compete with each other.
 Besides being fun, this project can be used to learn programming with Java or to facilitate small programming 
 competitions.
 
-*Getting started*
+# Getting started
 The project can be built using gradle creating an executable jar file. But you can also start it from the main class 
 (control.Main) directly.
 
@@ -26,7 +26,7 @@ finished or you can abort the competition by clicking the abort button. Moreover
 about the snakes (their names, their current length, whether they are alive, and the maximum length they ever reached 
 if snakes re-appear after they die).
 
-*Rules*
+# Rules
 In each turn, each snake moves one field into some direction (UP, LEFT, DOWN, or RIGHT). If a snake moves on a field 
 with food, its length increases by one. If a snake moves on a field with a wall or another snake part (possibly from 
 itself), it crashes and dies. Moreover, if a snake does not move on a field with food for too many turns, it dies of 
@@ -37,6 +37,6 @@ This decision has to be computed within 200 milliseconds. If a snake control tak
 direction, the next direction is always set to UP and the snake dies if its control took too long for three times (not 
 necessarily in a row).
 
-*How to contribute*
+# How to contribute
 Pull requests are always welcome.
 
