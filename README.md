@@ -37,3 +37,6 @@ This decision has to be computed within 200 milliseconds. If a snake control tak
 direction, the next direction is always set to UP and the snake dies if its control took too long for three times (not 
 necessarily in a row).
 
+*How to contribute*
+Pull requests are always welcome.
+
