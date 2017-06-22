@@ -40,3 +40,9 @@ necessarily in a row).
 # How to contribute
 Pull requests are always welcome.
 
+# Trouble Shooting
+In case you encounter a NullPointerException when trying to load snake controls from a folder, check whether your Java 
+installation is properly configured such that a JDK (not only JRE) version of Java is being executed from any path. If 
+that does not solve your problem, you can just add your snake control to the list in the Main class and start the 
+competition with the argument "samples". Then the list of snake controls specified in the Main class will be used for 
+the competition without loading these files via the dynamic compiler.

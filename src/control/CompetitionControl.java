@@ -176,12 +176,20 @@ public class CompetitionControl {
     }
 
     /**
+     * Initializes the snakes based on the specified snake controls.
+     * @param controls The snake controls.
+     */
+    public void initSnakes(final List<SnakeControl> controls) {
+        this.snakeControls.setSnakeControls(controls);
+        this.generateSnakes();
+        this.removeSnakePositions();
+    }
+
+    /**
      * Loads and initializes the snakes.
      */
     public void loadSnakes() {
-        this.snakeControls.setSnakeControls(DynamicCompiler.compileAndLoad(this.settings.getSourceDirectory().get()));
-        this.generateSnakes();
-        this.removeSnakePositions();
+        this.initSnakes(DynamicCompiler.compileAndLoad(this.settings.getSourceDirectory().get()));
     }
 
     /**

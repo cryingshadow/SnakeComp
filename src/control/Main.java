@@ -3,21 +3,38 @@ package control;
 import java.awt.*;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 
 import javax.swing.*;
 import javax.swing.event.*;
 
+import com.beust.jcommander.internal.*;
+
+import control.samples.*;
 import model.*;
 import view.*;
 
 /**
- * Test class.
+ * Main class. Starts the GUI and possibly pre-loads snake controls if specified by arguments.
  * @author cryingshadow
  */
 public class Main {
 
     /**
-     * @param args Ignored.
+     * Snake controls to be used when the argument "samples" is being specified for the main method.
+     */
+    private static final List<SnakeControl> PRE_DEFINED_SNAKE_CONTROLS =
+        Lists.newArrayList(
+            new GreedySnakeControl(),
+            new RandomSnakeControl(),
+            new RotatingSnakeControl(),
+            new UpLeftSnakeControl()
+        );
+
+    /**
+     * @param args Can specify the folder from where to pre-load the snake controls or to use the snake controls stored
+     *             in this class by specifying "samples" as the first argument. If empty, the folder for snake controls
+     *             can be specified from the UI.
      */
     public static void main(final String[] args) {
         final JFrame frame = new JFrame("SnakeTest");
@@ -68,7 +85,11 @@ public class Main {
         );
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         if (args.length > 0) {
-            Main.preload(args[0], settings, control);
+            if (args[0].equals("samples")) {
+                control.initSnakes(Main.PRE_DEFINED_SNAKE_CONTROLS);
+            } else {
+                Main.preload(args[0], settings, control);
+            }
         }
         frame.pack();
         frame.setVisible(true);
