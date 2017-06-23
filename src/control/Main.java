@@ -8,8 +8,6 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import com.beust.jcommander.internal.*;
-
 import control.samples.*;
 import model.*;
 import view.*;
@@ -24,7 +22,7 @@ public class Main {
      * Snake controls to be used when the argument "samples" is being specified for the main method.
      */
     private static final List<SnakeControl> PRE_DEFINED_SNAKE_CONTROLS =
-        Lists.newArrayList(
+        Arrays.asList(
             new GreedySnakeControl(),
             new RandomSnakeControl(),
             new RotatingSnakeControl(),
