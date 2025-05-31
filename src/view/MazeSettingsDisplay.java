@@ -146,7 +146,7 @@ public class MazeSettingsDisplay extends JPanel {
                 @Override
                 public void actionPerformed(final ActionEvent event) {
                     try {
-                        MazeSettingsDisplay.this.competitionControl.generateMaze();
+                        MazeSettingsDisplay.this.competitionControl.generateWalls();
                     } catch (final Exception e) {
                         ExceptionDisplay.showException(MazeSettingsDisplay.this, e);
                     }

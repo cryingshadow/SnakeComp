@@ -2,7 +2,7 @@ package model;
 
 import java.awt.*;
 import java.util.*;
-import java.util.List;
+import java.util.concurrent.*;
 
 import control.*;
 import util.*;
@@ -25,36 +25,6 @@ public class Snake {
         }
         poss.offer(pos);
         return poss;
-    }
-
-    /**
-     * If the specified thread is alive, interrupt that thread and stop it after 2 seconds.
-     * @param t A thread.
-     */
-    private static void shutdownThread(final Thread t) {
-        if (t.isAlive()) {
-            t.interrupt();
-            final Thread killer =
-                new Thread(
-                    new Runnable() {
-
-                        @SuppressWarnings({ "removal" })
-                        @Override
-                        public void run() {
-                            try {
-                                Thread.sleep(2000);
-                                if (t.isAlive()) {
-                                    t.stop();
-                                }
-                            } catch (final InterruptedException e) {
-                                // do nothing
-                            }
-                        }
-
-                    }
-                );
-            killer.start();
-        }
     }
 
     /**
@@ -164,78 +134,35 @@ public class Snake {
         return new Snake(true, this.color, this.control, 0, this.maxHunger, 0, 0, new LinkedList<Position>());
     }
 
-    /**
-     * @return The snake's color.
-     */
     public Color getColor() {
         return this.color;
     }
 
-    /**
-     * @return The position of the snake's head.
-     */
-    public Position getHead() {
-        return this.snake.getLast();
-    }
-
-    /**
-     * @return The length of this snake.
-     */
-    public int getLength() {
+    public int getCurrentLength() {
         return this.snake.size();
     }
 
-    /**
-     * @return The maximum length this snake ever reached so far.
-     */
+    public Position getHeadPosition() {
+        return this.snake.getLast();
+    }
+
     public int getMaxLength() {
         return this.maxLength;
     }
 
-    /**
-     * @return The snake's name.
-     */
     public String getName() {
         return this.control.getName();
     }
 
-    /**
-     * @param maze The maze.
-     * @return The direction in which to move next and a flag indicating whether the computation took too long.
-     */
-    public Pair<Direction, Boolean> getNextDirection(final Maze maze) {
-        final Position curPos = this.getHead();
-        final List<Direction> container = new Vector<Direction>(1);
-        final Object monitor = this;
-        final Thread t =
-            new Thread(
-                new Runnable() {
-
-                    @Override
-                    public void run() {
-                        container.add(Snake.this.control.nextDirection(maze, curPos.getX(), curPos.getY()));
-                        synchronized (monitor) {
-                            monitor.notify();
-                        }
-                    }
-
-                }
-            );
-        t.start();
+    public Pair<Direction, Boolean> getNextDirection(final Maze maze, final ExecutorService executor) {
+        final Position curPos = this.getHeadPosition();
+        final Future<Direction> nextDirection =
+            executor.submit(() -> Snake.this.control.nextDirection(maze, curPos.getX(), curPos.getY()));
         try {
-            synchronized (monitor) {
-                monitor.wait(200);
-            }
-        } catch (final InterruptedException e) {
-            // just continue
-        } finally {
-            Snake.shutdownThread(t);
+            return new Pair<Direction, Boolean>(nextDirection.get(200, TimeUnit.MILLISECONDS), false);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            return new Pair<Direction, Boolean>(Direction.values()[(int)(System.currentTimeMillis() % 4)], true);
         }
-        final List<Direction> snapshot = new ArrayList<Direction>(container);
-        if (snapshot.size() > 0) {
-            return new Pair<Direction, Boolean>(snapshot.get(0), false);
-        }
-        return new Pair<Direction, Boolean>(Direction.values()[(int)(System.currentTimeMillis() % 4)], true);
     }
 
     /**
@@ -244,7 +171,7 @@ public class Snake {
      *         has to be post-processed by an over- or underflow.
      */
     public Position getNextPosition(final Direction direction) {
-        final Position currentHead = this.getHead();
+        final Position currentHead = this.getHeadPosition();
         switch (direction) {
             case DOWN:
                 return new Position(currentHead.getX(), currentHead.getY() - 1);

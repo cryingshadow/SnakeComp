@@ -113,7 +113,7 @@ public class SnakesDisplay extends JPanel {
                 final StringBuilder text = new StringBuilder();
                 text.append(value.getName());
                 text.append(" (");
-                text.append(value.getLength());
+                text.append(value.getCurrentLength());
                 if (SnakesDisplay.this.settings.isRespawning()) {
                     text.append("/");
                     text.append(value.getMaxLength());
