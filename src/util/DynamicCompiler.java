@@ -1,6 +1,7 @@
 package util;
 
 import java.io.*;
+import java.lang.reflect.*;
 import java.net.*;
 import java.util.*;
 import java.util.stream.*;
@@ -15,10 +16,6 @@ import control.*;
  */
 public class DynamicCompiler {
 
-    /**
-     * @param directory The directory holding the snake controls for a competition.
-     * @return The compiled and loaded snake controls.
-     */
     public static List<SnakeControl> compileAndLoad(final File directory) {
         final List<SnakeControl> res = new LinkedList<SnakeControl>();
         if (!directory.exists()) {
@@ -56,7 +53,7 @@ public class DynamicCompiler {
                     ) {
                         for (final String name : names) {
                             final Class<?> loadedClass = classLoader.loadClass("control.samples." + name);
-                            res.add((SnakeControl)loadedClass.newInstance());
+                            res.add((SnakeControl)loadedClass.getDeclaredConstructor().newInstance());
                         }
                     }
                 } else {
@@ -71,7 +68,16 @@ public class DynamicCompiler {
                     throw new IllegalArgumentException(errString.toString());
                 }
             }
-        } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+        } catch (
+            IOException
+            | ClassNotFoundException
+            | InstantiationException
+            | IllegalAccessException
+            | InvocationTargetException
+            | NoSuchMethodException
+            | SecurityException e
+        ) {
+            e.printStackTrace();
             throw new IllegalArgumentException(e);
         }
         return res;

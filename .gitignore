@@ -3,8 +3,6 @@
 *.project
 .settings
 .gradle
-gradle/
-gradlew
-gradlew.bat
 build/
 test-output/
+bin/
