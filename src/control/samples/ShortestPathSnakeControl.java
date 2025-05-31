@@ -1,6 +1,7 @@
 package control.samples;
 
 import java.util.*;
+import java.util.stream.*;
 
 import control.*;
 import model.*;
@@ -20,7 +21,7 @@ public class ShortestPathSnakeControl implements SnakeControl {
             .getSurroundingPositions(current)
             .stream()
             .filter(pos -> !collisionTypes.contains(maze.getField(pos).getType()))
-            .toList();
+            .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override

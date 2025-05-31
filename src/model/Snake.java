@@ -38,12 +38,14 @@ public class Snake {
                 new Thread(
                     new Runnable() {
 
-                        @SuppressWarnings("deprecation")
+                        @SuppressWarnings({ "removal" })
                         @Override
                         public void run() {
                             try {
                                 Thread.sleep(2000);
-                                t.stop();
+                                if (t.isAlive()) {
+                                    t.stop();
+                                }
                             } catch (final InterruptedException e) {
                                 // do nothing
                             }

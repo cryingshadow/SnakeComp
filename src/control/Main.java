@@ -1,12 +1,7 @@
 package control;
 
-import java.awt.*;
 import java.io.*;
 import java.util.*;
-import java.util.List;
-
-import javax.swing.*;
-import javax.swing.event.*;
 
 import control.samples.*;
 import model.*;
@@ -23,6 +18,7 @@ public class Main {
      */
     private static final List<SnakeControl> PRE_DEFINED_SNAKE_CONTROLS =
         Arrays.asList(
+            new ShortestPathSnakeControl(),
             new GreedySnakeControl(),
             new RandomSnakeControl(),
             new RotatingSnakeControl(),
@@ -35,53 +31,13 @@ public class Main {
      *             can be specified from the UI.
      */
     public static void main(final String[] args) {
-        final JFrame frame = new JFrame("SnakeTest");
-        final JPanel content = new JPanel(new GridBagLayout());
-        final JPanel statsAndControls = new JPanel();
-        statsAndControls.setLayout(new GridBagLayout());
-        final JScrollPane scroll = new JScrollPane(content);
-        frame.getContentPane().add(scroll);
         final Settings settings = new Settings();
         final Maze maze = new Maze(settings);
-        final Competition competition = new Competition();
         final Snakes snakes = new Snakes();
         final SnakeControls snakeControls = new SnakeControls();
+        final Competition competition = new Competition();
         final CompetitionControl control = new CompetitionControl(settings, maze, snakes, snakeControls, competition);
-        final MazeDisplay mazeDisplay = new MazeDisplay(maze, settings);
-        final SnakesDisplay snakesDisplay = new SnakesDisplay(settings, snakes);
-        final SettingsDisplay settingsDisplay = new SettingsDisplay(settings, competition, control);
-        final CompetitionDisplay competitionDisplay =
-            new CompetitionDisplay(settings, competition, snakeControls, control);
-        final GridBagConstraints c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 1.0;
-        statsAndControls.add(snakesDisplay, c);
-        c.gridy = 1;
-        statsAndControls.add(settingsDisplay, c);
-        c.gridy = 2;
-        statsAndControls.add(competitionDisplay, c);
-        c.gridy = 0;
-        c.anchor = GridBagConstraints.NORTHEAST;
-        content.add(mazeDisplay, c);
-        c.gridx = 1;
-        c.anchor = GridBagConstraints.NORTH;
-        c.fill = GridBagConstraints.NONE;
-        c.weightx = 0.0;
-        content.add(statsAndControls, c);
-        settings.addChangeListener(
-            new ChangeListener() {
-
-                @Override
-                public void stateChanged(final ChangeEvent e) {
-                    frame.validate();
-                    content.scrollRectToVisible(statsAndControls.getBounds());
-                }
-
-            }
-        );
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        final MainFrame frame = new MainFrame(maze, snakes, snakeControls, competition, settings, control);
         if (args.length > 0) {
             if (args[0].equals("samples")) {
                 control.initSnakes(Main.PRE_DEFINED_SNAKE_CONTROLS);
