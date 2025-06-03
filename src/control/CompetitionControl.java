@@ -211,7 +211,7 @@ public class CompetitionControl {
             return snake.kill();
         }
         final Position pos = snake.getHeadPosition();
-        switch (this.maze.getField(pos.getX(), pos.getY()).getType()) {
+        switch (this.maze.getField(pos.getX(), pos.getY()).type()) {
             case COLLISION_ON_WALL:
             case COLLISION_ON_FOOD:
             case COLLISION_ON_FREE:

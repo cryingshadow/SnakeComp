@@ -18,6 +18,7 @@ public class Main {
      */
     private static final List<SnakeControl> PRE_DEFINED_SNAKE_CONTROLS =
         Arrays.asList(
+            new ImprovedShortestPathSnakeControl(),
             new ShortestPathSnakeControl(),
             new GreedySnakeControl(),
             new RandomSnakeControl(),

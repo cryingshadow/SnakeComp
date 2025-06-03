@@ -29,7 +29,7 @@ public class RandomSnakeControl implements SnakeControl {
             maze
             .getSurroundingPositions(xPos, yPos)
             .stream()
-            .filter(pos -> !maze.getField(pos).getType().isObstacle())
+            .filter(pos -> !maze.getField(pos).type().isObstacle)
             .collect(Collectors.toList());
         if (surrounding.isEmpty()) {
             return Direction.UP;

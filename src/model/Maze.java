@@ -63,7 +63,7 @@ public class Maze extends ChangeListenable {
      * @return The positions of food that is being eaten.
      */
     public Collection<Position> getEatenFood() {
-        return this.getPositions(field -> field.getType().equals(FieldType.SNAKE_HEAD_EATING));
+        return this.getPositions(field -> field.type().equals(FieldType.SNAKE_HEAD_EATING));
     }
 
     /**
@@ -87,14 +87,14 @@ public class Maze extends ChangeListenable {
      * @return The positions with food on them that is not being eaten.
      */
     public Collection<Position> getFood() {
-        return this.getPositions(field -> field.getType().equals(FieldType.FOOD));
+        return this.getPositions(field -> field.type().equals(FieldType.FOOD));
     }
 
     /**
      * @return The free positions in this maze.
      */
     public List<Position> getFreePositions() {
-        return this.getPositions(field -> field.getType().equals(FieldType.FREE));
+        return this.getPositions(field -> field.type().equals(FieldType.FREE));
     }
 
     /**
@@ -158,7 +158,7 @@ public class Maze extends ChangeListenable {
     public int numOfFood() {
         return
             this.getPositions(
-                field -> field.getType().equals(FieldType.FOOD) || field.getType().equals(FieldType.COLLISION_ON_FOOD)
+                field -> field.type().equals(FieldType.FOOD) || field.type().equals(FieldType.COLLISION_ON_FOOD)
             ).size();
     }
 

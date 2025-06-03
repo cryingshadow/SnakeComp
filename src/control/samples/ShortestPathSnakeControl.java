@@ -20,7 +20,7 @@ public class ShortestPathSnakeControl implements SnakeControl {
         return maze
             .getSurroundingPositions(current)
             .stream()
-            .filter(pos -> !collisionTypes.contains(maze.getField(pos).getType()))
+            .filter(pos -> !collisionTypes.contains(maze.getField(pos).type()))
             .collect(Collectors.toCollection(ArrayList::new));
     }
 
@@ -36,7 +36,7 @@ public class ShortestPathSnakeControl implements SnakeControl {
         final Position initial = new Position(xPos, yPos);
         Position current = initial;
         predecessors.put(current, null);
-        FieldType currentFieldType = maze.getField(current).getType();
+        FieldType currentFieldType = maze.getField(current).type();
         while (!currentFieldType.equals(FieldType.FOOD) && !currentFieldType.equals(FieldType.COLLISION_ON_FOOD)) {
             final List<Position> surrounding = ShortestPathSnakeControl.getSurroundingFreePositions(maze, current);
             surrounding.removeAll(predecessors.keySet());
@@ -55,7 +55,7 @@ public class ShortestPathSnakeControl implements SnakeControl {
                 }
                 return initial.computeDirection(free.getFirst());
             }
-            currentFieldType = maze.getField(current).getType();
+            currentFieldType = maze.getField(current).type();
         }
         Position previous = predecessors.get(current);
         while (!previous.equals(initial)) {
